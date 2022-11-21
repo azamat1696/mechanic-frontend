@@ -100,7 +100,7 @@ const PurchaseButton = ({ handleOpen }) => {
       }}
       disableRipple={true}
     >
-      Purchase Btn
+      Purchase
     </Button>
   )
 }
