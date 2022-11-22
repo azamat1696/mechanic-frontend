@@ -193,15 +193,34 @@ export default function PurchaseForm({ handleClose }) {
   return (
     <Grid container spacing={2} gap={0} style={{ margin: '20px 0 0 20px' }}>
       <Grid item xs={12}>
-        <Typography variant="h4" gutterBottom component="div" sx={{ mb: 3.5 }}>
+        <Typography
+          variant="h5"
+          gutterBottom
+          component="div"
+          sx={{ mb: 3.5, fontSize: '28px' }}
+        >
           Purchase Order
         </Typography>
+
         <Autocomplete
           disablePortal
           id="combo-box-demo"
           options={supplier}
-          sx={{ width: 250 }}
-          renderInput={(params) => <TextField {...params} label="Supplier" />}
+          sx={{
+            width: 250,
+            '& .MuiAutocomplete-input': { height: '17.5px' },
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Supplier"
+              InputLabelProps={{
+                style: {
+                  fontSize: '0.9rem',
+                },
+              }}
+            />
+          )}
           onChange={(e) => handleSupplierChange(e)}
         />
         <Button
@@ -227,9 +246,20 @@ export default function PurchaseForm({ handleClose }) {
                     disablePortal
                     id="combo-box-demo"
                     options={activeSP}
-                    sx={{ width: 300 }}
+                    sx={{
+                      width: 300,
+                      '& .MuiAutocomplete-input': { height: '17.5px' },
+                    }}
                     renderInput={(params) => (
-                      <TextField {...params} label="Products" />
+                      <TextField
+                        {...params}
+                        label="Products"
+                        InputLabelProps={{
+                          style: {
+                            fontSize: '0.9rem',
+                          },
+                        }}
+                      />
                     )}
                     onChange={(e) => handleSupplierProducts(e, row)}
                   />
@@ -238,9 +268,18 @@ export default function PurchaseForm({ handleClose }) {
                     id="filled-number"
                     label="Quantity"
                     type="number"
-                    sx={{ ml: 1 }}
+                    sx={{
+                      ml: 1,
+                      '& .MuiFilledInput-input': {
+                        height: '17.5px',
+                      },
+                      fontSize: '0.8rem',
+                    }}
                     InputLabelProps={{
                       shrink: true,
+                      style: {
+                        fontSize: '0.9rem',
+                      },
                     }}
                     InputProps={{ inputProps: { min: 0, defaultValue: 0 } }}
                     variant="filled"
