@@ -16,24 +16,39 @@ import InventoryIcon from '@mui/icons-material/Inventory'
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
 
 const active = {
-  color: '#444444',
+  color: '#29437abb',
   ml: 2,
-  fontWeight: 600,
 }
 
 const inActive = {
   ml: 2,
+  color: '#4d4d4da8',
+}
+
+const btnStyle = {
+  p: 1,
 }
 
 export default function BasicList({ comp, setComp }) {
   return (
     <Box sx={{ width: '100%', maxWidth: 250, bgcolor: 'background.paper' }}>
       <nav aria-label="main mailbox folders">
-        <List>
+        <List
+          sx={{
+            p: 0,
+            backgroundColor: '#fff',
+            '& .MuiTypography-root': {
+              fontWeight: 500,
+              fontSize: '1.025rem',
+              // letterSpacing: '0.025rem',
+            },
+          }}
+        >
           <ListItem disablePadding>
             <ListItemButton
               disableRipple={true}
               onClick={(e) => setComp(e.target.outerText)}
+              sx={btnStyle}
             >
               <ListItemText
                 primary="Products"
@@ -45,6 +60,7 @@ export default function BasicList({ comp, setComp }) {
             <ListItemButton
               disableRipple={true}
               onClick={(e) => setComp(e.target.outerText)}
+              sx={btnStyle}
             >
               <ListItemText
                 primary="Stock"
@@ -56,6 +72,7 @@ export default function BasicList({ comp, setComp }) {
             <ListItemButton
               disableRipple={true}
               onClick={(e) => setComp(e.target.outerText)}
+              sx={btnStyle}
             >
               <ListItemText
                 primary="Jobs"
@@ -67,6 +84,7 @@ export default function BasicList({ comp, setComp }) {
             <ListItemButton
               disableRipple={true}
               onClick={(e) => setComp(e.target.outerText)}
+              sx={btnStyle}
             >
               <ListItemText
                 primary="Purchases"
@@ -78,6 +96,7 @@ export default function BasicList({ comp, setComp }) {
             <ListItemButton
               disableRipple={true}
               onClick={(e) => setComp(e.target.outerText)}
+              sx={btnStyle}
             >
               <ListItemText
                 primary="Customers"
@@ -92,6 +111,7 @@ export default function BasicList({ comp, setComp }) {
                 console.log('e', e.target.outerText)
                 setComp(e.target.outerText)
               }}
+              sx={btnStyle}
             >
               <ListItemText
                 primary="Suppliers"

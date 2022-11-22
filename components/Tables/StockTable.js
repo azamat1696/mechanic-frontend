@@ -6,12 +6,13 @@ import Box from '@mui/material/Box'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid'
 import LinearProgress from '@mui/material/LinearProgress'
 import Skeleton from '@mui/material/Skeleton'
+import Chip from '@mui/material/Chip'
 
 const columns = [
   {
     field: 'productId',
     headerName: 'ID',
-    width: 100,
+    width: 90,
     align: 'center',
     headerAlign: 'center',
     hide: false,
@@ -22,7 +23,7 @@ const columns = [
   {
     field: 'image',
     headerName: 'Image',
-    width: 150,
+    width: 120,
     hide: false,
     editable: false,
     sortable: false,
@@ -59,8 +60,18 @@ const columns = [
   {
     field: 'product_code',
     headerName: 'Product code',
-    width: 150,
+    width: 140,
     hide: false,
+    editable: false,
+    sortable: false,
+    filterable: true,
+    align: 'center',
+    headerAlign: 'center',
+  },
+  {
+    field: 'min',
+    headerName: 'Min Qty',
+    width: 100,
     editable: false,
     sortable: false,
     filterable: true,
@@ -71,7 +82,7 @@ const columns = [
     field: 'Reciepts',
     headerName: 'Reciepts',
     type: 'number',
-    width: 120,
+    width: 100,
     hide: false,
     editable: false,
     sortable: true,
@@ -86,7 +97,7 @@ const columns = [
     editable: false,
     sortable: true,
     filterable: true,
-    width: 120,
+    width: 100,
     align: 'center',
     headerAlign: 'center',
   },
@@ -97,11 +108,32 @@ const columns = [
     editable: false,
     sortable: true,
     filterable: true,
-    width: 120,
+    width: 100,
     align: 'center',
     headerAlign: 'center',
   },
+  {
+    field: 'stockLevel',
+    headerName: 'Level',
+    hide: false,
+    editable: false,
+    sortable: true,
+    filterable: true,
+    width: 100,
+    align: 'center',
+    headerAlign: 'center',
+    renderCell: (params) => <MinChip params={params} />,
+  },
 ]
+
+const MinChip = ({ params }) => {
+  const { min, inStock } = params.row
+  if (inStock <= min) {
+    return <Chip label="Low" color="error" variant="outlined" />
+  } else {
+    return <Chip label="Ok" color="success" variant="outlined" />
+  }
+}
 
 export default React.memo(function DataTable({ stock, stockLoading }) {
   return (

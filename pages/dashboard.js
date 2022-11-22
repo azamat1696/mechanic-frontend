@@ -178,10 +178,10 @@ export default React.memo(function Dashboard() {
     <div>
       <Grid
         container
-        spacing={2.5}
+        spacing={2}
         sx={{ mt: 2, width: '90%', margin: '0 auto' }}
       >
-        <Grid item xs={1.55}>
+        <Grid item xs={1.75}>
           <Item>
             <SideNavDashboard comp={comp} setComp={setComp} />
           </Item>

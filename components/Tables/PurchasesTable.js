@@ -118,10 +118,7 @@ const StatusChip = ({ params }) => {
   }
 }
 
-export default function PurchasesTable({ purchaseOrdersData, authToken }) {
-  React.useEffect(() => {
-    console.log('purchaseOrdersData', purchaseOrdersData)
-  }, [purchaseOrdersData])
+export default function PurchasesTable({ purchaseOrdersData }) {
   return (
     <Box sx={{ height: 425, width: '100%' }}>
       <DataGrid
@@ -129,6 +126,7 @@ export default function PurchasesTable({ purchaseOrdersData, authToken }) {
         columns={columns}
         pageSize={5}
         disableColumnFilter
+        density="comfortable"
         disableDensitySelector
         components={{
           Toolbar: GridToolbar,

@@ -40,7 +40,7 @@ const columns = [
     field: 'quantity',
     headerName: 'Quantity',
     type: 'number',
-    width: 150,
+    width: 100,
     editable: false,
     align: 'center',
     headerAlign: 'center',
@@ -56,7 +56,7 @@ const columns = [
     field: 'ttlRetail',
     headerName: 'Total Retail',
     type: 'number',
-    width: 150,
+    width: 140,
     editable: false,
     align: 'center',
     headerAlign: 'center',
@@ -75,7 +75,7 @@ const columns = [
     field: 'deliveryStatus',
     headerName: 'Status',
     sortable: false,
-    width: 150,
+    width: 140,
     align: 'center',
     headerAlign: 'center',
     renderCell: (params) => <StatusChip params={params} />,
@@ -140,6 +140,7 @@ export default function OrdersTable({ ordersData, authToken }) {
         rows={ordersData.foundOrders}
         columns={columns}
         pageSize={5}
+        density="comfortable"
         disableColumnFilter
         disableDensitySelector
         components={{

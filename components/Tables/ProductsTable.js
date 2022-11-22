@@ -180,7 +180,7 @@ const columns = [
   {
     field: 'image',
     headerName: 'Image',
-    width: 150,
+    width: 120,
     editable: false,
     sortable: false,
     filterable: false,
@@ -191,7 +191,7 @@ const columns = [
   {
     field: 'name',
     headerName: 'Product name',
-    width: 150,
+    width: 130,
     editable: false,
     sortable: true,
     filterable: true,
@@ -201,17 +201,18 @@ const columns = [
   {
     field: 'product_code',
     headerName: 'Product code',
-    width: 150,
+    width: 130,
     editable: false,
     sortable: false,
     filterable: true,
     align: 'center',
     headerAlign: 'center',
   },
+
   {
     field: 'manufacturer',
     headerName: 'Manufacturer',
-    width: 150,
+    width: 130,
     editable: false,
     sortable: true,
     filterable: true,
@@ -221,7 +222,7 @@ const columns = [
   {
     field: 'supplierName',
     headerName: 'Supplier Name',
-    width: 150,
+    width: 130,
     editable: false,
     sortable: true,
     filterable: true,
@@ -232,6 +233,7 @@ const columns = [
       return params.row.supplier.name
     },
   },
+
   {
     field: 'costPrice',
     headerName: 'Cost',
@@ -269,6 +271,16 @@ const columns = [
     },
   },
   {
+    field: 'minimum',
+    headerName: 'Min Qty',
+    width: 100,
+    editable: false,
+    sortable: false,
+    filterable: true,
+    align: 'center',
+    headerAlign: 'center',
+  },
+  {
     field: 'delete',
     headerName: 'Delete',
     editable: false,
@@ -277,7 +289,7 @@ const columns = [
     renderCell: (params) => <DeleteBtn params={params} />,
     align: 'right',
     headerAlign: 'center',
-    width: 100,
+    width: 90,
   },
   {
     field: 'edit',
@@ -288,7 +300,7 @@ const columns = [
     renderCell: (params) => <EditBtn params={params} />,
     align: 'right',
     headerAlign: 'center',
-    width: 100,
+    width: 90,
   },
 ]
 
@@ -337,7 +349,7 @@ export default React.memo(function DataTable({ products, loading }) {
     <Box sx={{ height: '500px' }}>
       <EditProductProvider>
         <DataGrid
-          // disableColumnFilter
+          disableColumnFilter
           disableDensitySelector
           density="comfortable"
           filterMode="client"
@@ -353,6 +365,10 @@ export default React.memo(function DataTable({ products, loading }) {
                   fontSize: 15,
                 },
               },
+            },
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500 },
             },
           }}
           sx={{
