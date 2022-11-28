@@ -9,6 +9,7 @@ import SideNavDashboard from '../components/SideNavDashboard'
 import PurchasesTable from '../components/Tables/PurchasesTable'
 import SuppliersTable from '../components/Tables/SuppliersTable'
 import OrdersTable from '../components/Tables/OrdersTable'
+import PurchaseOrder from '../components/order-view/PurchaseOrder'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
@@ -27,6 +28,10 @@ import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import ButtonStack from '../components/ButtonStack'
 
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -35,12 +40,42 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }))
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
+
 export default React.memo(function Dashboard() {
+  // Alert
+  const [open, setOpen] = React.useState(false)
+  const handleClick = () => setOpen(true)
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setOpen(false)
+  }
+
+  React.useEffect(() => {
+    console.log('snackbar', open)
+  }, [open])
+  // Alert
+
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const [loading, setLoading] = React.useState(false)
   const [stockLoading, setStockLoading] = React.useState(false)
   const router = useRouter()
 
+  //
+  const [acc, setAcc] = React.useState(true)
+  const [purchaseOrder, setPurchaseOrder] = React.useState({
+    id: null,
+    data: null,
+  })
+  function handlePurchaseSelection(params) {
+    const { id } = params.row
+    setPurchaseOrder({ id, data: params.row })
+  }
+  //
   const {
     authToken,
     isAuthenticated,
@@ -154,7 +189,9 @@ export default React.memo(function Dashboard() {
       return (
         <PurchasesTable
           purchaseOrdersData={purchaseOrdersData}
+          handlePurchaseSelection={handlePurchaseSelection}
           authToken={authToken}
+          setAcc={setAcc}
         />
       )
     } else if (comp === 'Customers') {
@@ -174,18 +211,38 @@ export default React.memo(function Dashboard() {
     }
   }, [isAuthenticated, router])
 
+  React.useEffect(() => {
+    if (comp !== 'Purchases') {
+      setPurchaseOrder({ id: null, data: null })
+      setAcc(true)
+    }
+  }, [comp])
+
   return (
     <div>
+      {/* <Button onClick={handleClick}>OpenSB</Button> */}
+      {/* Snackbar */}
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        sx={{ zIndex: 100000 }}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Purchase Order Successfully Created!
+        </Alert>
+      </Snackbar>
+      {/* Snackbar */}
       <Grid
         container
         spacing={2}
-        sx={{ mt: 2, width: '90%', margin: '0 auto' }}
+        sx={{ mt: 2, width: '95%', margin: '0 auto' }}
       >
         <Grid item xs={1.75}>
           <Item>
             <SideNavDashboard comp={comp} setComp={setComp} />
           </Item>
-          <ButtonStack comp={comp} />
+          <ButtonStack comp={comp} setOpen={setOpen} />
         </Grid>
         <Grid item xs={10}>
           <Item sx={{ ml: 1 }}>{renderComp()}</Item>

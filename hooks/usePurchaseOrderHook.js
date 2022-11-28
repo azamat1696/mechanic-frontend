@@ -19,7 +19,9 @@ export async function createPurchaseOrder(token, purchaseOrder) {
       'http://localhost:8000/api/merchants/create-purchase-order',
       myInit
     )
-    return await res.json()
+    const data = await res.json()
+    console.log('PO Created Response', data)
+    return data
   } catch (err) {
     console.log('err', err)
   }

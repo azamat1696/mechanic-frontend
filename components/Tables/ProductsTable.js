@@ -149,7 +149,6 @@ const MatDel = ({ index }) => {
 
 const MatEdit = ({ index }) => {
   const { handleOpen } = React.useContext(EditProductContext)
-  // console.log('index', index)
   return (
     <FormControlLabel
       control={
@@ -305,7 +304,6 @@ const columns = [
 ]
 
 const EditBtn = ({ params }) => {
-  // useRenderCount('EditBtn PT')
   return (
     <div style={{ cursor: 'pointer' }}>
       <MatEdit index={params.row.id} />
@@ -314,7 +312,6 @@ const EditBtn = ({ params }) => {
 }
 
 const DeleteBtn = ({ params }) => {
-  // useRenderCount('DeleteBtn PT')
   return (
     <div style={{ cursor: 'pointer' }}>
       <MatDel index={params.row.id} />
@@ -323,14 +320,10 @@ const DeleteBtn = ({ params }) => {
 }
 
 const Img = ({ params }) => {
-  // useRenderCount('Img PT')
-
   // Custom Image Loader
   const myLoader = ({ width, quality }) => {
     return `${params.value}?w=${width}&q=${quality || 25}`
   }
-  // Custom Image Loader
-
   return (
     <Image
       loader={myLoader}

@@ -8,21 +8,23 @@ import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import SendIcon from '@mui/icons-material/Send'
 import Typography from '@mui/material/Typography'
+import LoadingButton from '@mui/lab/LoadingButton'
 
 // Hooks
 import useAuthContext from '../../../hooks/useAuthContext'
 import { useSuppliersByMerchant } from '../../../hooks/useSuppliersHook'
-import { createPurchaseOrder } from '../../../hooks/usePurchaseOrderHook'
+import {
+  createPurchaseOrder,
+  usePurchaseOrder,
+} from '../../../hooks/usePurchaseOrderHook'
 import { useMutation } from '@tanstack/react-query'
 
-export default function PurchaseForm({ handleClose }) {
-  // CONTEXT
+export default function PurchaseForm({ handleClose, setO: setOpen }) {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const {
     authToken,
     merchantDetails: { id },
   } = authState
-  // CONTEXT
 
   // STATE
   const [rows, setRows] = React.useState({
@@ -34,10 +36,16 @@ export default function PurchaseForm({ handleClose }) {
   const [activeSP, setActiveSP] = React.useState([])
   const [count, setCount] = React.useState(0)
   const [rowBtn, setRowBtn] = React.useState(true)
+  const [loading, setLoading] = React.useState(false)
   // STATE
 
   // REACT QUERY
   const { data } = useSuppliersByMerchant(authToken)
+  const {
+    data: poData,
+    isStale: poIsStale,
+    refetch,
+  } = usePurchaseOrder(authToken)
 
   function addRow() {
     setRows({
@@ -127,13 +135,20 @@ export default function PurchaseForm({ handleClose }) {
   }
 
   const { mutate } = useMutation(() => createPurchaseOrder(authToken, rows), {
-    // onSuccess: () => {
-    //   setLoading(!loading)
-    //   if (customersIsStale) {
-    //     customersRefetch()
-    //   }
-    // },
+    onSuccess: () => {
+      console.log('success')
+      setLoading(false)
+      handleClose()
+      setOpen(true)
+      if (poIsStale) {
+        refetch()
+      }
+    },
   })
+
+  React.useEffect(() => {
+    console.log('poData', poData)
+  }, [poData])
 
   React.useEffect(() => {
     console.log('rows', rows)
@@ -300,14 +315,20 @@ export default function PurchaseForm({ handleClose }) {
       </Grid>
       <Grid item xs={12}>
         {/* SEND ORDER */}
-        <Button
-          variant="contained"
+        <LoadingButton
+          size="small"
+          onClick={() => {
+            setLoading(true)
+            mutate()
+          }}
           endIcon={<SendIcon />}
           disabled={rows.products.length === 0}
-          onClick={() => mutate()}
+          loading={loading}
+          loadingPosition="end"
+          variant="contained"
         >
           Send
-        </Button>
+        </LoadingButton>
       </Grid>
     </Grid>
   )

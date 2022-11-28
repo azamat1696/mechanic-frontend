@@ -7,6 +7,10 @@ import IconButton from '@mui/material/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
+import DownloadIcon from '@mui/icons-material/Download'
+
+import useAuthContext from '../../hooks/useAuthContext'
+import { getPdf } from '../../hooks/usePurchaceOrderPdf'
 
 const columns = [
   {
@@ -64,14 +68,23 @@ const columns = [
     headerAlign: 'center',
     renderCell: (params) => <StatusChip params={params} />,
   },
+  // {
+  //   field: 'order',
+  //   headerName: 'Order',
+  //   sortable: false,
+  //   width: 110,
+  //   align: 'center',
+  //   headerAlign: 'center',
+  //   renderCell: (params) => <ViewBtn params={params} />,
+  // },
   {
-    field: 'order',
-    headerName: 'Order',
+    field: 'downloadPdf',
+    headerName: 'Download',
     sortable: false,
     width: 110,
     align: 'center',
     headerAlign: 'center',
-    renderCell: (params) => <ViewBtn params={params} />,
+    renderCell: (params) => <Download params={params} />,
   },
 ]
 
@@ -91,23 +104,23 @@ const MatDel = ({ index }) => {
   )
 }
 
-const ViewBtn = ({ params }) => {
-  return (
-    <Button
-      variant="outlined"
-      size="small"
-      sx={{
-        borderTopLeftRadius: '20px',
-        borderTopRightRadius: '20px',
-        borderBottomLeftRadius: '20px',
-        borderBottomRightRadius: '20px',
-        margin: '0 0 0 20px',
-      }}
-    >
-      View
-    </Button>
-  )
-}
+// const ViewBtn = ({ params }) => {
+//   return (
+//     <Button
+//       variant="outlined"
+//       size="small"
+//       sx={{
+//         borderTopLeftRadius: '20px',
+//         borderTopRightRadius: '20px',
+//         borderBottomLeftRadius: '20px',
+//         borderBottomRightRadius: '20px',
+//         margin: '0 0 0 20px',
+//       }}
+//     >
+//       View
+//     </Button>
+//   )
+// }
 
 const StatusChip = ({ params }) => {
   const { status } = params.row
@@ -118,13 +131,56 @@ const StatusChip = ({ params }) => {
   }
 }
 
-export default function PurchasesTable({ purchaseOrdersData }) {
+const Download = ({ params }) => {
+  const { state: authState, dispatch } = useAuthContext()
+  const { authToken } = authState
+
+  async function handlePdfDownload(name, token, id) {
+    const { myFile, err } = await getPdf(token, id)
+
+    if (err) {
+      return err
+    }
+
+    const f = new File([myFile], `${name}.pdf`, { type: 'application/pdf' })
+    const url = URL.createObjectURL(f)
+
+    let link = document.createElement('a')
+    link.href = url
+    link.download = f.name
+    link.target = '__blank'
+
+    document.body.appendChild(link)
+    link.click()
+    URL.revokeObjectURL(url)
+    link.remove()
+  }
+
   return (
-    <Box sx={{ height: 425, width: '100%' }}>
+    <IconButton
+      aria-label="delete"
+      size="large"
+      color="primary"
+      onClick={() => handlePdfDownload('invoice', authToken, params.row.id)}
+    >
+      <DownloadIcon fontSize="inherit" />
+    </IconButton>
+  )
+}
+
+export default function PurchasesTable({
+  purchaseOrdersData,
+  handlePurchaseSelection,
+  setAcc,
+}) {
+  const [pageSize, setPageSize] = React.useState(10)
+
+  return (
+    <Box sx={{ height: 600, width: '100%' }}>
       <DataGrid
         rows={purchaseOrdersData.orders}
         columns={columns}
-        pageSize={5}
+        pageSize={pageSize}
         disableColumnFilter
         density="comfortable"
         disableDensitySelector
@@ -163,9 +219,13 @@ export default function PurchasesTable({ purchaseOrdersData }) {
             color: 'red',
           },
         }}
-        rowsPerPageOptions={[5]}
+        rowsPerPageOptions={[10]}
         disableSelectionOnClick
         experimentalFeatures={{ newEditingApi: true }}
+        onCellClick={(params) => {
+          setAcc(false)
+          handlePurchaseSelection(params)
+        }}
       />
     </Box>
   )

@@ -2,6 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+
 // Components
 import Nav from '../components/Nav'
 import Map from '../components/Map'
@@ -23,6 +24,7 @@ export default function Home() {
     password: '',
   })
   const router = useRouter()
+
   async function userLogin() {
     const myInit = {
       method: 'POST',

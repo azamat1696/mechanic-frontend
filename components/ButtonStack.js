@@ -123,7 +123,7 @@ const OrderButton = ({ handleOpen }) => {
   )
 }
 
-export default function DividerStack({ comp }) {
+export default function DividerStack({ comp, setOpen: setO }) {
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -158,13 +158,8 @@ export default function DividerStack({ comp }) {
                 <CreateSupplierForm handleClose={handleClose} />
               )}
               {comp === 'Purchases' && (
-                <PurchaseForm handleClose={handleClose} />
+                <PurchaseForm handleClose={handleClose} setO={setO} />
               )}
-              {/* {
-                comp = "Jobs" && (
-
-                )
-              } */}
             </Box>
           </Fade>
         </Modal>

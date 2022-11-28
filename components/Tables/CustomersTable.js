@@ -171,8 +171,6 @@ const columns = [
 ]
 
 const EditBtn = ({ params }) => {
-  // useRenderCount('EditBtn CT')
-  // console.log('params', params.row.id)
   return (
     <div style={{ cursor: 'pointer' }}>
       <MatEdit index={params.row.id} />
@@ -181,7 +179,6 @@ const EditBtn = ({ params }) => {
 }
 
 const DeleteBtn = ({ params }) => {
-  // useRenderCount('DeleteBtn CT')
   return (
     <div style={{ cursor: 'pointer' }}>
       <MatDel index={params.row.id} />
