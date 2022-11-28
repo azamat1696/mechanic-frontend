@@ -104,6 +104,7 @@ const PurchaseButton = ({ handleOpen }) => {
     </Button>
   )
 }
+
 const OrderButton = ({ handleOpen }) => {
   return (
     <Button

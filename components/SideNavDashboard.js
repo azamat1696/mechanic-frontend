@@ -16,7 +16,7 @@ import InventoryIcon from '@mui/icons-material/Inventory'
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
 
 const active = {
-  color: '#29437abb',
+  color: '#202024',
   ml: 2,
 }
 

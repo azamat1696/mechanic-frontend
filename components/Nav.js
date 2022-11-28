@@ -16,6 +16,7 @@ import AdbIcon from '@mui/icons-material/Adb'
 
 // Components
 import LoginModal from '../components/LoginModal'
+import Switch from '../components/Switch'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
@@ -156,6 +157,9 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
               setLogin={setLogin}
               userLogin={userLogin}
             />
+          </Box>
+          <Box sx={{ flexGrow: 0, ml: 5 }}>
+            <Switch />
           </Box>
         </Toolbar>
       </Container>

@@ -38,75 +38,12 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 650,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
+  p: 3,
 }
-
-// Context
-export const EditProductContext = React.createContext()
-
-export function EditProductProvider({ children }) {
-  const [open, setOpen] = React.useState(false)
-  const [idx, setIdx] = React.useState(null)
-
-  const handleOpen = (i) => {
-    setIdx(i)
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-    refetch()
-  }
-
-  const { state: authState, dispatch: authDispatch } = useAuthContext()
-
-  const { data, refetch } = useFindProduct(
-    authState.authToken,
-    idx,
-    'findProduct'
-  )
-
-  const exportProps = {
-    handleOpen,
-    handleClose,
-    data,
-    open,
-    idx,
-    setIdx,
-  }
-
-  React.useEffect(() => {
-    refetch()
-  }, [idx])
-
-  return (
-    <EditProductContext.Provider value={exportProps}>
-      {children}
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={open}>
-          <Box sx={style}>
-            <EditProductForm data={data} idx={idx} handleClose={handleClose} />
-          </Box>
-        </Fade>
-      </Modal>
-    </EditProductContext.Provider>
-  )
-}
-// Context
 
 const MatDel = ({ index }) => {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
@@ -148,14 +85,14 @@ const MatDel = ({ index }) => {
 }
 
 const MatEdit = ({ index }) => {
-  const { handleOpen } = React.useContext(EditProductContext)
+  // const { handleOpen } = React.useContext(EditProductContext)
   return (
     <FormControlLabel
       control={
         <IconButton
           color="secondary"
           aria-label="add an alarm"
-          onClick={() => handleOpen(index)}
+          // onClick={() => handleOpen(index)}
         >
           <EditIcon color={'info'} fontSize={'12px'} />
         </IconButton>
@@ -337,56 +274,85 @@ const Img = ({ params }) => {
 }
 
 export default React.memo(function DataTable({ products, loading }) {
-  useRenderCount('ProductsTable')
+  const [open, setOpen] = React.useState(false)
+  const [product, setProduct] = React.useState({})
+
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
   return (
-    <Box sx={{ height: '500px' }}>
-      <EditProductProvider>
-        <DataGrid
-          disableColumnFilter
-          disableDensitySelector
-          density="comfortable"
-          filterMode="client"
-          components={{
-            Toolbar: GridToolbar,
-            LoadingOverlay: LinearProgress,
-          }}
-          componentsProps={{
-            panel: {
-              sx: {
-                '& .MuiTypography-root': {
-                  color: '#2e2e2e',
-                  fontSize: 15,
-                },
+    <Box sx={{ height: 500 }}>
+      <DataGrid
+        disableColumnFilter
+        disableDensitySelector
+        density="comfortable"
+        filterMode="client"
+        components={{
+          Toolbar: GridToolbar,
+          LoadingOverlay: LinearProgress,
+        }}
+        componentsProps={{
+          panel: {
+            sx: {
+              '& .MuiTypography-root': {
+                color: '#2e2e2e',
+                fontSize: 15,
               },
             },
-            toolbar: {
-              showQuickFilter: true,
-              quickFilterProps: { debounceMs: 500 },
+          },
+          toolbar: {
+            showQuickFilter: true,
+            quickFilterProps: { debounceMs: 500 },
+          },
+        }}
+        sx={{
+          '& .MuiDataGrid-toolbarContainer': {
+            padding: '15px 40px 0px 40px',
+          },
+          '& .MuiButton-root': {
+            color: '#4777a9',
+            marginRight: '20px',
+            '&:hover': {
+              backgroundColor: '#fff',
             },
-          }}
-          sx={{
-            '& .MuiDataGrid-toolbarContainer': {
-              padding: '15px 40px 0px 40px',
-            },
-            '& .MuiButton-root': {
-              color: '#4777a9',
-              marginRight: '20px',
-              '&:hover': {
-                backgroundColor: '#fff',
-              },
-            },
-            '& .MuiInputBase-root-MuiInput-root': {
-              color: 'red',
-            },
-          }}
-          rows={loading ? [] : products.products}
-          columns={columns}
-          pageSize={5}
-          loading={loading}
-          rowsPerPageOptions={[5]}
-          disableVirtualization={true}
-        />
-      </EditProductProvider>
+          },
+          '& .MuiInputBase-root-MuiInput-root': {
+            color: 'red',
+          },
+        }}
+        rows={loading ? [] : products.products}
+        columns={columns}
+        pageSize={5}
+        loading={loading}
+        rowsPerPageOptions={[5]}
+        disableVirtualization={true}
+        onCellClick={(params) => {
+          console.log(params)
+          setProduct(params.row)
+          params.field === 'edit' && handleOpen(params.id)
+        }}
+      />
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 175,
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={style}>
+            <EditProductForm
+              product={product}
+              setProduct={setProduct}
+              handleClose={handleClose}
+            />
+          </Box>
+        </Fade>
+      </Modal>
     </Box>
   )
 })
