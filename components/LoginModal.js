@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
+import useThemeContext from '../hooks/useThemeContext'
 
 const style = {
   position: 'absolute',
@@ -28,7 +29,6 @@ const style = {
 
 export default function BasicModal() {
   const router = useRouter()
-
   // Modal
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
@@ -36,6 +36,8 @@ export default function BasicModal() {
     setOpen(false)
   }
   // Modal
+
+  const { theme } = useThemeContext()
 
   // Login
   const { state: authState, dispatch: authDispatch } = useAuthContext()
@@ -124,7 +126,16 @@ export default function BasicModal() {
             size="small"
             onChange={(e) => setLogin({ ...login, password: e.target.value })}
           />
-          <Button variant="contained" onClick={userLogin}>
+          <Button
+            variant="contained"
+            onClick={userLogin}
+            sx={{
+              backgroundColor: theme === true ? '#3c5f83' : '#444d56',
+              '&:hover': {
+                backgroundColor: theme === true ? '#3c5f83' : '#444d56',
+              },
+            }}
+          >
             Login
           </Button>
         </Box>

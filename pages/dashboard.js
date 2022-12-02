@@ -31,6 +31,7 @@ import ButtonStack from '../components/ButtonStack'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
+import Skeleton from '@mui/material/Skeleton'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -45,6 +46,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 })
 
 export default React.memo(function Dashboard() {
+  const router = useRouter()
   // Alert
   const [open, setOpen] = React.useState(false)
   const handleClick = () => setOpen(true)
@@ -54,16 +56,11 @@ export default React.memo(function Dashboard() {
     }
     setOpen(false)
   }
-
-  React.useEffect(() => {
-    console.log('snackbar', open)
-  }, [open])
   // Alert
 
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const [loading, setLoading] = React.useState(false)
   const [stockLoading, setStockLoading] = React.useState(false)
-  const router = useRouter()
 
   //
   const [acc, setAcc] = React.useState(true)
@@ -76,6 +73,7 @@ export default React.memo(function Dashboard() {
     setPurchaseOrder({ id, data: params.row })
   }
   //
+
   const {
     authToken,
     isAuthenticated,
@@ -89,14 +87,15 @@ export default React.memo(function Dashboard() {
     isStale: stockIsStale,
     refetch: stockRefetch,
     isFetching: stockIsFetching,
-  } = useStockByMerchantData(authToken, id, 'stockByMerchant')
+  } = useStockByMerchantData(authToken, id)
 
   const {
     data: productsData,
     status: productsStatus,
     error: productError,
     isStale: productsIsStale,
-  } = useProductsByMerchantData(authToken, 'productsByMerchant')
+    refetch: productsRefetch,
+  } = useProductsByMerchantData(authToken)
 
   const {
     data: customersData,
@@ -139,13 +138,24 @@ export default React.memo(function Dashboard() {
   }, [customersIsStale])
 
   React.useEffect(() => {
+    if (productsIsStale) {
+      console.log('Products are stale')
+      productsRefetch()
+    }
+  }, [productsIsStale])
+
+  React.useEffect(() => {
+    console.log('productsData', productsData)
+  }, [productsData])
+
+  React.useEffect(() => {
     if (purchaseOrdersIsStale) {
       purchaseOrdersRefetch()
     }
   }, [purchaseOrdersIsStale])
 
   React.useEffect(() => {
-    console.log('ps products status', productsStatus)
+    console.log('products status', productsStatus)
     if (productsStatus === 'loading') {
       setLoading(true)
     } else if (productsStatus === 'success') {
@@ -154,7 +164,6 @@ export default React.memo(function Dashboard() {
   }, [productsStatus])
 
   React.useEffect(() => {
-    console.log('ps stockStatus', stockStatus)
     if (stockStatus === 'loading') {
       setStockLoading(true)
     } else if (stockStatus === 'success') {
@@ -165,20 +174,16 @@ export default React.memo(function Dashboard() {
   function renderComp() {
     if (comp === 'Products') {
       if (productsStatus === 'loading') {
-        return 'Loading...'
+        return <Skeleton variant="rectangular" width="100%" height="100%" />
       } else if (productsStatus === 'success') {
-        return (
-          <ProductsTable
-            products={productsData}
-            loading={loading}
-            // setLoading={setLoading}
-          />
-        )
+        return <ProductsTable products={productsData} loading={loading} />
       }
     } else if (comp === 'Stock') {
       if (stockStatus === 'loading') {
-        return '...Loading'
+        return <Skeleton variant="rectangular" width="100%" height="100%" />
       } else if (stockIsStale) {
+        return <StockTable stock={stockData} stockLoading={stockLoading} />
+      } else {
         return <StockTable stock={stockData} stockLoading={stockLoading} />
       }
     } else if (comp === 'Jobs') {
@@ -197,10 +202,8 @@ export default React.memo(function Dashboard() {
     } else if (comp === 'Customers') {
       if (customersStatus === 'loading') {
         return 'Loading...'
-      } else if (customersIsStale) {
-        return (
-          <CustomersTable customers={customersData} authToken={authToken} />
-        )
+      } else {
+        return <CustomersTable customers={customersData} />
       }
     }
   }
@@ -219,9 +222,8 @@ export default React.memo(function Dashboard() {
   }, [comp])
 
   return (
-    <div>
+    <div style={{ minHeight: '100%' }}>
       {/* <Button onClick={handleClick}>OpenSB</Button> */}
-      {/* Snackbar */}
       <Snackbar
         open={open}
         autoHideDuration={6000}
@@ -232,11 +234,10 @@ export default React.memo(function Dashboard() {
           Purchase Order Successfully Created!
         </Alert>
       </Snackbar>
-      {/* Snackbar */}
       <Grid
         container
         spacing={2}
-        sx={{ mt: 2, width: '95%', margin: '0 auto' }}
+        sx={{ mt: 2, width: '95%', margin: '0 auto', height: '100%' }}
       >
         <Grid item xs={1.75}>
           <Item>

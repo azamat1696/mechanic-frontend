@@ -14,12 +14,15 @@ import MenuItem from '@mui/material/MenuItem'
 import MenuIcon from '@mui/icons-material/Menu'
 import AdbIcon from '@mui/icons-material/Adb'
 
+import { useTheme } from '@mui/material/styles'
+
 // Components
 import LoginModal from '../components/LoginModal'
 import Switch from '../components/Switch'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
+import useThemeContext from '../hooks/useThemeContext'
 
 const pages = [
   /*'test'*/
@@ -48,11 +51,13 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
     setAnchorElUser(null)
   }
 
+  const { theme, setTheme } = useThemeContext()
+
   return (
     <AppBar
       position="static"
       sx={{
-        backgroundColor: '#3c5f83',
+        backgroundColor: theme === true ? '#3c5f83' : '#444d56',
       }}
     >
       <Container maxWidth="md">
@@ -150,6 +155,9 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
                 )
             )}
           </Box>
+          <Box sx={{ flexGrow: 0, ml: 5 }}>
+            <Switch theme={theme} setTheme={setTheme} />
+          </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <LoginModal
@@ -157,9 +165,6 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
               setLogin={setLogin}
               userLogin={userLogin}
             />
-          </Box>
-          <Box sx={{ flexGrow: 0, ml: 5 }}>
-            <Switch />
           </Box>
         </Toolbar>
       </Container>

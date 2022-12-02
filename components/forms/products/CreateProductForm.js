@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
 import Autocomplete from '@mui/material/Autocomplete'
+import Divider from '@mui/material/Divider'
 
 // Icons
 import IconButton from '@mui/material/IconButton'
@@ -16,7 +17,7 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera'
 // Hooks
 import useAuthContext from '../../../hooks/useAuthContext'
 import {
-  createNewProduct,
+  createProduct,
   useProductsByMerchantData,
   useStockByMerchantData,
 } from '../../../hooks/useAsyncHooks'
@@ -25,55 +26,55 @@ import { useSuppliersByMerchant } from '../../../hooks/useSuppliersHook'
 
 import { useMutation } from '@tanstack/react-query'
 
+const labelStyles = {
+  display: 'block',
+  margin: '0 0 8.5px 3px',
+  fontWeight: '500',
+  color: '#202024',
+  fontSize: '0.95rem',
+}
+
+const cursorStyle = {
+  '.MuiOutlinedInput-input': {
+    cursor: 'default',
+  },
+}
+
 export default function CreateProductForm({ handleClose }) {
   const [photo, setPhoto] = React.useState('')
   const [loading, setLoading] = React.useState(false)
+
   const [newProduct, setNewProduct] = React.useState({
     name: '',
     manufacturer: '',
     image: '',
     productCode: '',
     supplierId: '',
+    costPrice: '',
+    retailPrice: '',
+    minimum: '',
   })
+
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const {
     authToken,
     merchantDetails: { id },
   } = authState
 
-  const { refetch: productsRefetch, isStale: productsIsStale } =
-    useProductsByMerchantData(authToken, 'productsByMerchant')
-  const { refetch: stockRefetch, isStale: stockIsStale } =
-    useStockByMerchantData(authToken, id, 'stockByMerchant')
+  const { refetch: productsRefetch } = useProductsByMerchantData(authToken)
+  const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
 
   const { data } = useSuppliersByMerchant(authToken)
 
   const [suppliers, setSuppliers] = React.useState([])
 
-  const { mutate } = useMutation(
-    () => createNewProduct(authState.authToken, newProduct),
-    {
-      onSuccess: () => {
-        setLoading(!loading)
-        if (productsIsStale) {
-          productsRefetch()
-        }
-        if (stockIsStale) {
-          stockRefetch()
-        }
-      },
-    }
-  )
-
-  const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-  ]
+  const { mutate } = useMutation(() => createProduct(authToken, newProduct), {
+    onSuccess: () => {
+      setLoading(!loading)
+      productsRefetch()
+      stockRefetch()
+    },
+  })
 
   React.useEffect(() => {
     console.log('newProduct', newProduct)
@@ -89,11 +90,6 @@ export default function CreateProductForm({ handleClose }) {
   const [editedSuppliers, setEditedSuppliers] = React.useState([])
 
   React.useEffect(() => {
-    console.log('editedSuppliers', editedSuppliers)
-  }, [editedSuppliers])
-
-  React.useEffect(() => {
-    console.log('suppliers', suppliers)
     if (suppliers) {
       const newArr = suppliers.map((s) => {
         return {
@@ -113,12 +109,16 @@ export default function CreateProductForm({ handleClose }) {
             <Typography variant="h5">Create Product</Typography>
           </Grid>
           <Grid item xs={12}>
+            <Divider />
+          </Grid>
+          <Grid item xs={4}>
+            <label style={labelStyles}>Product Name</label>
             <TextField
               id="outlined-basic"
-              label="Name"
               variant="outlined"
               autoComplete="off"
               size="small"
+              sx={cursorStyle}
               onChange={(e) =>
                 setNewProduct({
                   ...newProduct,
@@ -127,13 +127,14 @@ export default function CreateProductForm({ handleClose }) {
               }
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
+            <label style={labelStyles}>Manufacturer</label>
             <TextField
               id="outlined-basic"
-              label="Manufacturer"
               variant="outlined"
               autoComplete="off"
               size="small"
+              sx={cursorStyle}
               onChange={(e) =>
                 setNewProduct({
                   ...newProduct,
@@ -142,13 +143,14 @@ export default function CreateProductForm({ handleClose }) {
               }
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
+            <label style={labelStyles}>Product Code</label>
             <TextField
               id="outlined-basic"
-              label="Product code"
               variant="outlined"
               autoComplete="off"
               size="small"
+              sx={cursorStyle}
               onChange={(e) =>
                 setNewProduct({
                   ...newProduct,
@@ -157,15 +159,15 @@ export default function CreateProductForm({ handleClose }) {
               }
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
+            <label style={labelStyles}>Supplier</label>
             <Autocomplete
               disablePortal
               id="combo-box-demo"
               options={editedSuppliers}
-              sx={{ width: 300 }}
               size="small"
               renderInput={(params) => (
-                <TextField {...params} label="Supplier" />
+                <TextField {...params} sx={cursorStyle} />
               )}
               onChange={(e) => {
                 editedSuppliers.forEach((s) => {
@@ -179,21 +181,90 @@ export default function CreateProductForm({ handleClose }) {
               }}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
+            <label style={labelStyles}>Cost Price</label>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              autoComplete="off"
+              size="small"
+              type="number"
+              sx={cursorStyle}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              value={Number(newProduct.costPrice).toFixed(2)}
+              onChange={(e) => {
+                setNewProduct({
+                  ...newProduct,
+                  costPrice: Number(e.target.value).toFixed(2),
+                })
+              }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <label style={labelStyles}>Retail Price</label>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              autoComplete="off"
+              size="small"
+              type="number"
+              sx={cursorStyle}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              value={Number(newProduct.retailPrice).toFixed(2)}
+              onChange={(e) => {
+                setNewProduct({
+                  ...newProduct,
+                  retailPrice: Number(e.target.value).toFixed(2),
+                })
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={4}>
+            <label style={labelStyles}>Min Qty</label>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              autoComplete="off"
+              size="small"
+              type="number"
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              value={Number(newProduct.minimum).toFixed(0)}
+              sx={cursorStyle}
+              onChange={(e) =>
+                setNewProduct({
+                  ...newProduct,
+                  minimum: Number(e.target.value).toFixed(0),
+                })
+              }
+            />
+          </Grid>
+
+          <Grid item xs={6}>
+            <label style={labelStyles}>Image</label>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              autoComplete="off"
+              size="small"
+              disabled={true}
+              sx={cursorStyle}
+              value={newProduct.image.name}
+            />
             <IconButton
               color="primary"
               aria-label="upload picture"
               component="label"
+              sx={{ ml: 1, ...cursorStyle }}
             >
               <input
                 hidden
                 type="file"
                 name="image"
                 onChange={(e) => {
-                  e.preventDefault()
                   setNewProduct({
                     ...newProduct,
-                    photo: e.target.files[0],
+                    image: e.target.files[0],
                   })
                 }}
               />

@@ -40,56 +40,6 @@ const style = {
   p: 4,
 }
 
-const MatDel = ({ index }) => {
-  const { state: authState } = useAuthContext()
-  const { refetch: customersRefetch, isStale: customersIsStale } =
-    useCustomersByMerchant(authState.authToken, 'customersByMerchant')
-
-  const { mutate } = useMutation(
-    () => deleteCustomer(authState.authToken, index),
-    {
-      onSuccess: () => {
-        if (customersIsStale) {
-          customersRefetch()
-        }
-      },
-    }
-  )
-
-  const handleDelete = (index) => mutate(index)
-
-  return (
-    <FormControlLabel
-      control={
-        <IconButton
-          aria-label="add an alarm"
-          onClick={() => handleDelete(index)}
-          // data-testid={index}
-        >
-          <DeleteIcon color={'error'} />
-        </IconButton>
-      }
-    />
-  )
-}
-
-const MatEdit = ({ index }) => {
-  useRenderCount('Mat Edit CT')
-  return (
-    <FormControlLabel
-      control={
-        <IconButton
-          color="secondary"
-          aria-label="add an alarm"
-          // onClick={() => handleOpen(index)}
-        >
-          <EditIcon color={'info'} fontSize={'12px'} />
-        </IconButton>
-      }
-    />
-  )
-}
-
 const columns = [
   {
     field: 'id',
@@ -152,7 +102,7 @@ const columns = [
     editable: false,
     sortable: false,
     filterable: false,
-    renderCell: (params) => <DeleteBtn params={params} />,
+    renderCell: () => <DeleteBtn />,
     align: 'right',
     headerAlign: 'center',
     width: 100,
@@ -163,81 +113,60 @@ const columns = [
     editable: false,
     sortable: false,
     filterable: false,
-    renderCell: (params) => <EditBtn params={params} />,
+    renderCell: () => <EditBtn />,
     align: 'right',
     headerAlign: 'center',
     width: 100,
   },
 ]
 
-const EditBtn = ({ params }) => {
+const EditBtn = () => {
   return (
     <div style={{ cursor: 'pointer' }}>
-      <MatEdit index={params.row.id} />
+      <FormControlLabel
+        control={
+          <IconButton color="secondary" aria-label="add an alarm">
+            <EditIcon color={'info'} fontSize={'12px'} />
+          </IconButton>
+        }
+      />
     </div>
   )
 }
 
-const DeleteBtn = ({ params }) => {
+const DeleteBtn = () => {
   return (
     <div style={{ cursor: 'pointer' }}>
-      <MatDel index={params.row.id} />
+      <FormControlLabel
+        control={
+          <IconButton aria-label="add an alarm">
+            <DeleteIcon color={'error'} />
+          </IconButton>
+        }
+      />
     </div>
   )
 }
 
-export default React.memo(function CustomersTable({ customers, authToken }) {
-  useRenderCount('CustomersTable')
+export default React.memo(function CustomersTable({ customers }) {
+  const { state: authState } = useAuthContext()
+  const { authToken } = authState
 
   const [open, setOpen] = React.useState(false)
-  const [idx, setIdx] = React.useState(null)
 
-  const [customerToEdit, setCustomerToEdit] = React.useState({
-    id: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    telephone: '',
+  const [customer, setCustomer] = React.useState({})
+
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+  const handleDelete = (i) => mutate(i)
+
+  const { refetch: customersRefetch } = useCustomersByMerchant(authToken)
+
+  const { mutate } = useMutation((i) => deleteCustomer(authToken, i), {
+    onSuccess: () => {
+      customersRefetch()
+    },
   })
-
-  const handleOpen = (i) => {
-    setIdx(i)
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-    setIdx(null)
-  }
-
-  React.useEffect(() => {
-    console.log('customer', customers)
-  }, [customers])
-
-  React.useEffect(() => {
-    const found = customers.find((item) => item.id === idx)
-    if (found) {
-      setCustomerToEdit({
-        id: found.id,
-        firstName: found.firstName,
-        lastName: found.lastName,
-        email: found.email,
-        telephone: found.telephone,
-      })
-    } else {
-      setCustomerToEdit({
-        id: '',
-        firstName: '',
-        lastName: '',
-        email: '',
-        telephone: '',
-      })
-    }
-  }, [idx, customers])
-
-  React.useEffect(() => {
-    console.log('customerToEdit', customerToEdit)
-  }, [customerToEdit])
 
   return (
     <Box sx={{ height: '500px' }}>
@@ -281,9 +210,16 @@ export default React.memo(function CustomersTable({ customers, authToken }) {
         pageSize={5}
         rowsPerPageOptions={[5]}
         disableVirtualization={true}
-        onCellClick={(params) =>
-          params.field === 'edit' && handleOpen(params.id)
-        }
+        onCellClick={(params) => {
+          const { id } = params.row
+          setCustomer(params.row)
+          if (params.field === 'edit') {
+            handleOpen()
+          }
+          if (params.field === 'delete') {
+            handleDelete(params.row.id)
+          }
+        }}
       />
       <Modal
         aria-labelledby="transition-modal-title"
@@ -299,11 +235,9 @@ export default React.memo(function CustomersTable({ customers, authToken }) {
         <Fade in={open}>
           <Box sx={style}>
             <EditCustomerForm
-              customerToEdit={customerToEdit}
-              setCustomerToEdit={setCustomerToEdit}
+              customer={customer}
+              setCustomer={setCustomer}
               handleClose={handleClose}
-              authToken={authToken}
-              idx={idx}
             />
           </Box>
         </Fade>

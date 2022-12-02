@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
 import Divider from '@mui/material/Divider'
-
+import Autocomplete from '@mui/material/Autocomplete'
 // Icons
 import SaveIcon from '@mui/icons-material/Save'
 import IconButton from '@mui/material/IconButton'
@@ -14,12 +14,11 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera'
 // Hooks
 import useAuthContext from '../../../hooks/useAuthContext'
 import {
-  useFindProduct,
-  useUpdateProduct,
-  updateSingleProduct,
+  updateProduct,
   useProductsByMerchantData,
   useStockByMerchantData,
 } from '../../../hooks/useAsyncHooks'
+import { useSuppliersByMerchant } from '../../../hooks/useSuppliersHook'
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
@@ -30,6 +29,12 @@ const labelStyles = {
   fontWeight: '500',
   color: '#202024',
   fontSize: '0.95rem',
+}
+
+const cursorStyle = {
+  '.MuiOutlinedInput-input': {
+    cursor: 'default',
+  },
 }
 
 export default function EditProductForm({ product, setProduct, handleClose }) {
@@ -43,8 +48,11 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
   const { refetch: stockRefetch, isStale: stockIsStale } =
     useStockByMerchantData(authToken, merchantDetails.id, 'stockByMerchant')
 
+  const { data } = useSuppliersByMerchant(authToken)
+  const [suppliersData, setsuppliersData] = React.useState([])
+
   const { mutate, status, error } = useMutation(
-    () => updateSingleProduct(authToken, product),
+    () => updateProduct(authToken, product),
     {
       onSuccess: () => {
         productsRefetch()
@@ -60,7 +68,6 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
   }, [productsIsStale])
 
   React.useEffect(() => {
-    console.log('status', status)
     if (status === 'success') {
       setLoading(false)
       handleClose()
@@ -74,6 +81,17 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
   React.useEffect(() => {
     console.log('product', product)
   }, [product])
+
+  React.useEffect(() => {
+    console.log('data', data)
+    const supplierData = data.map((d) => {
+      return {
+        ...d,
+        label: d.name,
+      }
+    })
+    setsuppliersData(supplierData)
+  }, [data])
 
   return (
     <form>
@@ -94,6 +112,7 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
               variant="outlined"
               autoComplete="off"
               size="small"
+              sx={cursorStyle}
               value={product.name}
               onChange={(e) =>
                 setProduct({
@@ -110,6 +129,7 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
               variant="outlined"
               autoComplete="off"
               size="small"
+              sx={cursorStyle}
               value={product.manufacturer}
               onChange={(e) =>
                 setProduct({
@@ -127,12 +147,44 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
               autoComplete="off"
               size="small"
               value={product.product_code}
+              sx={cursorStyle}
               onChange={(e) =>
                 setProduct({
                   ...product,
                   product_code: e.target.value,
                 })
               }
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <label style={labelStyles}>Supplier Name</label>
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={data && suppliersData}
+              size="small"
+              sx={cursorStyle}
+              value={product.supplier.name}
+              renderInput={(params) => <TextField {...params} />}
+              onChange={(e) => {
+                // Loops over suppliers array
+                // find id that matches based on name
+                // setProduct to
+                console.log('supplierData', suppliersData)
+                console.log('e', e.target.innerText)
+                suppliersData.forEach((s) => {
+                  if (e.target.innerText === s.label) {
+                    setProduct({
+                      ...product,
+                      supplierId: s.id,
+                      supplier: {
+                        ...product.supplier,
+                        name: s.name,
+                      },
+                    })
+                  }
+                })
+              }}
             />
           </Grid>
 
@@ -146,6 +198,7 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
               type="number"
               inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
               value={Number(product.costPrice).toFixed(2)}
+              sx={cursorStyle}
               onChange={(e) =>
                 setProduct({
                   ...product,
@@ -154,6 +207,7 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
               }
             />
           </Grid>
+
           <Grid item xs={3}>
             <label style={labelStyles}>Retail Price</label>
             <TextField
@@ -164,6 +218,7 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
               type="number"
               inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
               value={Number(product.retailPrice).toFixed(2)}
+              sx={cursorStyle}
               onChange={(e) =>
                 setProduct({
                   ...product,
@@ -172,8 +227,27 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
               }
             />
           </Grid>
+          <Grid item xs={4}>
+            <label style={labelStyles}>Min Qty</label>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              autoComplete="off"
+              size="small"
+              type="number"
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              value={Number(product.minimum)}
+              sx={cursorStyle}
+              onChange={(e) =>
+                setProduct({
+                  ...product,
+                  minimum: Number(e.target.value),
+                })
+              }
+            />
+          </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <label style={labelStyles}>Image</label>
             <TextField
               id="outlined-basic"

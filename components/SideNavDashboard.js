@@ -40,7 +40,6 @@ export default function BasicList({ comp, setComp }) {
             '& .MuiTypography-root': {
               fontWeight: 500,
               fontSize: '1.025rem',
-              // letterSpacing: '0.025rem',
             },
           }}
         >

@@ -15,10 +15,7 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera'
 // Hooks
 import useAuthContext from '../../../hooks/useAuthContext'
 import {
-  createNewProduct,
-  createNewCustomer,
-  useProductsByMerchantData,
-  useStockByMerchantData,
+  createCustomer,
   useCustomersByMerchant,
 } from '../../../hooks/useAsyncHooks'
 
@@ -42,17 +39,12 @@ export default function CreateCustomerForm({ handleClose }) {
     refetch: customersRefetch,
   } = useCustomersByMerchant(authToken, 'customersByMerchant')
 
-  const { mutate } = useMutation(
-    () => createNewCustomer(authState.authToken, customer),
-    {
-      onSuccess: () => {
-        setLoading(!loading)
-        if (customersIsStale) {
-          customersRefetch()
-        }
-      },
-    }
-  )
+  const { mutate } = useMutation(() => createCustomer(authToken, customer), {
+    onSuccess: () => {
+      setLoading(!loading)
+      customersRefetch()
+    },
+  })
 
   React.useEffect(() => {
     console.log('data', data)

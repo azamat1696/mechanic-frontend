@@ -26,7 +26,6 @@ import {
   deleteProduct,
   useProductsByMerchantData,
   useStockByMerchantData,
-  useFindProduct,
 } from '../../hooks/useAsyncHooks'
 import useRenderCount from '../../hooks/useRenderCount'
 
@@ -43,62 +42,6 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 3,
-}
-
-const MatDel = ({ index }) => {
-  const { state: authState, dispatch: authDispatch } = useAuthContext()
-
-  const { refetch: productsRefetch, isStale: productsIsStale } =
-    useProductsByMerchantData(authState.authToken, 'productsByMerchant')
-  const { refetch: stockRefetch, isStale: stockIsStale } =
-    useStockByMerchantData(
-      authState.authToken,
-      authState.merchantDetails.id,
-      'stockByMerchant'
-    )
-
-  const { mutate } = useMutation(
-    () => deleteProduct(authState.authToken, index),
-    {
-      onSuccess: () => {
-        productsIsStale && productsRefetch()
-        stockIsStale && stockRefetch()
-      },
-    }
-  )
-
-  const handleDelete = () => mutate(index)
-
-  return (
-    <FormControlLabel
-      control={
-        <IconButton
-          aria-label="add an alarm"
-          onClick={handleDelete}
-          data-testid={index}
-        >
-          <DeleteIcon color={'error'} />
-        </IconButton>
-      }
-    />
-  )
-}
-
-const MatEdit = ({ index }) => {
-  // const { handleOpen } = React.useContext(EditProductContext)
-  return (
-    <FormControlLabel
-      control={
-        <IconButton
-          color="secondary"
-          aria-label="add an alarm"
-          // onClick={() => handleOpen(index)}
-        >
-          <EditIcon color={'info'} fontSize={'12px'} />
-        </IconButton>
-      }
-    />
-  )
 }
 
 const columns = [
@@ -144,7 +87,6 @@ const columns = [
     align: 'center',
     headerAlign: 'center',
   },
-
   {
     field: 'manufacturer',
     headerName: 'Manufacturer',
@@ -169,7 +111,6 @@ const columns = [
       return params.row.supplier.name
     },
   },
-
   {
     field: 'costPrice',
     headerName: 'Cost',
@@ -222,7 +163,7 @@ const columns = [
     editable: false,
     sortable: false,
     filterable: false,
-    renderCell: (params) => <DeleteBtn params={params} />,
+    renderCell: () => <DeleteBtn />,
     align: 'right',
     headerAlign: 'center',
     width: 90,
@@ -233,31 +174,42 @@ const columns = [
     editable: false,
     sortable: false,
     filterable: false,
-    renderCell: (params) => <EditBtn params={params} />,
+    renderCell: () => <EditBtn />,
     align: 'right',
     headerAlign: 'center',
     width: 90,
   },
 ]
 
-const EditBtn = ({ params }) => {
+const EditBtn = () => {
   return (
     <div style={{ cursor: 'pointer' }}>
-      <MatEdit index={params.row.id} />
+      <FormControlLabel
+        control={
+          <IconButton color="secondary" aria-label="add an alarm">
+            <EditIcon color={'info'} fontSize={'12px'} />
+          </IconButton>
+        }
+      />
     </div>
   )
 }
 
-const DeleteBtn = ({ params }) => {
+const DeleteBtn = () => {
   return (
     <div style={{ cursor: 'pointer' }}>
-      <MatDel index={params.row.id} />
+      <FormControlLabel
+        control={
+          <IconButton aria-label="add an alarm">
+            <DeleteIcon color={'error'} />
+          </IconButton>
+        }
+      />
     </div>
   )
 }
 
 const Img = ({ params }) => {
-  // Custom Image Loader
   const myLoader = ({ width, quality }) => {
     return `${params.value}?w=${width}&q=${quality || 25}`
   }
@@ -274,11 +226,28 @@ const Img = ({ params }) => {
 }
 
 export default React.memo(function DataTable({ products, loading }) {
+  const { state: authState, dispatch: authDispatch } = useAuthContext()
+  const {
+    authToken,
+    merchantDetails: { id },
+  } = authState
+
   const [open, setOpen] = React.useState(false)
   const [product, setProduct] = React.useState({})
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+  const handleDelete = (i) => mutate(i)
+
+  const { refetch: productsRefetch } = useProductsByMerchantData(authToken)
+  const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
+
+  const { mutate } = useMutation((i) => deleteProduct(authToken, i), {
+    onSuccess: () => {
+      productsRefetch()
+      stockRefetch()
+    },
+  })
 
   return (
     <Box sx={{ height: 500 }}>
@@ -327,9 +296,14 @@ export default React.memo(function DataTable({ products, loading }) {
         rowsPerPageOptions={[5]}
         disableVirtualization={true}
         onCellClick={(params) => {
-          console.log(params)
+          const { id } = params
           setProduct(params.row)
-          params.field === 'edit' && handleOpen(params.id)
+          if (params.field === 'edit') {
+            handleOpen(id)
+          }
+          if (params.field === 'delete') {
+            handleDelete(id)
+          }
         }}
       />
       <Modal

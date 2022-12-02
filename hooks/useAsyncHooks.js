@@ -1,7 +1,6 @@
 // React Query
 import { useQuery } from '@tanstack/react-query'
 
-// fetchStockByMerchant
 export async function fetchStockByMerchant(token, merchId) {
   const myInit = {
     method: 'POST',
@@ -21,13 +20,12 @@ export async function fetchStockByMerchant(token, merchId) {
     console.log('err', err)
   }
 }
-
-export function useStockByMerchantData(token, merchId, name) {
-  return useQuery([`${name}`], () => fetchStockByMerchant(token, merchId))
+export function useStockByMerchantData(token, merchId) {
+  return useQuery([`stockByMerchant`], () =>
+    fetchStockByMerchant(token, merchId)
+  )
 }
-// fetchStockByMerchant
 
-// fetchpProductsByMerchant
 export async function fetchProductsByMerchant(token) {
   const myInit = {
     method: 'GET',
@@ -44,19 +42,19 @@ export async function fetchProductsByMerchant(token) {
       'http://localhost:8000/api/merchants/list-products',
       myInit
     )
-    return await res.json()
+    const data = await res.json()
+    console.log('products by merchant', data)
+    return data
   } catch (err) {
     console.log('err', err)
   }
 }
-
-export function useProductsByMerchantData(token, name) {
-  return useQuery([`${name}`], () => fetchProductsByMerchant(token))
+export function useProductsByMerchantData(token) {
+  return useQuery([`productsByMerchant`], () => fetchProductsByMerchant(token))
 }
-// fetchpProductsByMerchant
 
-// Create New Product
-export async function createNewProduct(token, newProduct) {
+// PRODUCTS CRUD
+export async function createProduct(token, newProduct) {
   let fd = new FormData()
 
   for (const [key, value] of Object.entries(newProduct)) {
@@ -78,15 +76,16 @@ export async function createNewProduct(token, newProduct) {
       myInit
     )
 
-    return await res.json()
+    const data = await res.json()
+    console.log('data', data)
+    return data
   } catch (err) {
     console.log('err', err)
   }
 }
-// Create New Product
 
-// Delete single product
 export async function deleteProduct(token, productId) {
+  console.log('deleteProduct function')
   const myInit = {
     method: 'POST',
     headers: {
@@ -103,39 +102,15 @@ export async function deleteProduct(token, productId) {
       'http://localhost:8000/api/merchants/delete-single-product',
       myInit
     )
-    return await res.json()
-  } catch (err) {
-    console.log('err', err)
-  }
-}
-// Delete single product
-
-// Update Products
-export async function fetchSingleProduct(token, productId) {
-  const myInit = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    mode: 'cors',
-    cache: 'default',
-    body: JSON.stringify({ productId }),
-  }
-
-  try {
-    const res = await fetch(
-      'http://localhost:8000/api/merchants/product',
-      myInit
-    )
     const data = await res.json()
+    console.log('data', data)
     return data
   } catch (err) {
     console.log('err', err)
   }
 }
 
-export async function updateSingleProduct(token, productToEdit) {
+export async function updateProduct(token, productToEdit) {
   let fd = new FormData()
 
   console.log('productToEdit', productToEdit)
@@ -165,19 +140,8 @@ export async function updateSingleProduct(token, productToEdit) {
     console.log('err', err)
   }
 }
+// PRODUCTS CRUD
 
-export function useFindProduct(token, productId, name) {
-  return useQuery([`${name}`], () => fetchSingleProduct(token, productId))
-}
-
-export function useUpdateProduct(token, productId, name) {
-  return useQuery([`${name}`], () =>
-    updateSingleProduct(token, productId, name, manufacturer)
-  )
-}
-// Update Products
-
-// Fetch Customers By Merchant
 export async function fetchCustomersByMerchant(token) {
   const myInit = {
     method: 'GET',
@@ -199,13 +163,14 @@ export async function fetchCustomersByMerchant(token) {
   }
 }
 
-export function useCustomersByMerchant(token, name) {
-  return useQuery([`name`], () => fetchCustomersByMerchant(token))
+export function useCustomersByMerchant(token) {
+  return useQuery([`customersByMerchant`], () =>
+    fetchCustomersByMerchant(token)
+  )
 }
-// Fetch Customers By Merchant
 
-// Create new customer
-export async function createNewCustomer(token, newCustomer) {
+// CUSTOMERS CRUD
+export async function createCustomer(token, newCustomer) {
   try {
     const myInit = {
       method: 'POST',
@@ -226,9 +191,7 @@ export async function createNewCustomer(token, newCustomer) {
     console.log('error', err)
   }
 }
-// Create new customer
 
-// Delete Customer
 export async function deleteCustomer(token, customerId) {
   console.log('customerId', customerId)
   const myInit = {
@@ -251,10 +214,8 @@ export async function deleteCustomer(token, customerId) {
     console.log('err', err)
   }
 }
-// Delete Customer
 
-// Update Customer
-export async function updateSingleCustomer(token, customerToEdit) {
+export async function updateCustomer(token, customerToEdit) {
   const myInit = {
     method: 'POST',
     headers: {
@@ -271,16 +232,25 @@ export async function updateSingleCustomer(token, customerToEdit) {
       `http://localhost:8000/api/merchants/update-customer`,
       myInit
     )
-    return await res.json()
+
+    if (!res.ok) {
+      throw {
+        error: new Error('something went wrong!'),
+        status: res.status,
+        body: await res.json(),
+      }
+    }
+
+    const data = await res.json()
+
+    return data
   } catch (err) {
-    console.log('err', err)
+    const { error, status, body } = err
+    throw {
+      error,
+      status,
+      body,
+    }
   }
 }
-
-export function useFindCustomer(token, customerId) {
-  console.log('called!')
-  return useQuery([`findCustomer`], () =>
-    fetchSingleCustomer(token, customerId)
-  )
-}
-// Update Customer
+// CUSTOMERS CRUD
