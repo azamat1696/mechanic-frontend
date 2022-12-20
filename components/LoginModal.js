@@ -42,8 +42,10 @@ export default function BasicModal() {
   // Login
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const [login, setLogin] = React.useState({
-    email: 'merchant12@gmail.com',
-    password: 'test1234',
+    // email: 'merchant11@gmail.com',
+    // password: 'test1234',
+    email: '',
+    password: '',
   })
 
   function handleLogout() {
@@ -92,9 +94,20 @@ export default function BasicModal() {
   return (
     <div>
       {authState.authToken ? (
-        <Button onClick={handleLogout} sx={{ color: '#fff' }}>
-          Logout
-        </Button>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            p: 0,
+            m: 0,
+          }}
+        >
+          <Button onClick={handleLogout} sx={{ color: '#fff', mr: 2 }}>
+            Logout
+          </Button>
+          <Box sx={{ mb: 0.65 }}>{authState.merchantDetails.name}</Box>
+        </div>
       ) : (
         <Button onClick={handleOpen} sx={{ color: '#fff' }}>
           Login
@@ -111,9 +124,16 @@ export default function BasicModal() {
             required
             id="outlined-required"
             label="email"
+            type="email"
+            // defaultValue={'merchant11@gmail.com'}
+            inputProps={{
+              autocomplete: 'password',
+              form: {
+                autocomplete: 'off',
+              },
+            }}
             autoComplete="off"
             size="small"
-            defaultValue={'merchant12@gmail.com'}
             onChange={(e) => setLogin({ ...login, email: e.target.value })}
           />
           <TextField
@@ -121,8 +141,8 @@ export default function BasicModal() {
             id="outlined-password-input"
             label="password"
             type="password"
-            defaultValue={'test1234'}
-            autoComplete="current-password"
+            // defaultValue={'test1234'}
+            autoComplete="off"
             size="small"
             onChange={(e) => setLogin({ ...login, password: e.target.value })}
           />

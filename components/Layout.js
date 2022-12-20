@@ -11,7 +11,6 @@ export default function Layout({ children }) {
       </Head>
       <Nav />
       {children}
-      {/* <Footer /> */}
     </div>
   )
 }

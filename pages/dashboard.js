@@ -20,14 +20,13 @@ import {
 } from '../hooks/useAsyncHooks'
 import { useSuppliersByMerchant } from '../hooks/useSuppliersHook'
 import { usePurchaseOrder } from '../hooks/usePurchaseOrderHook'
-import { useOrders } from '../hooks/useOrdersHook'
+import { useCustomerOrders } from '../hooks/useOrdersHook'
 
 // Material UI
 import { styled } from '@mui/material/styles'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import ButtonStack from '../components/ButtonStack'
-
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
@@ -63,11 +62,11 @@ export default React.memo(function Dashboard() {
   const [stockLoading, setStockLoading] = React.useState(false)
 
   //
-  const [acc, setAcc] = React.useState(true)
   const [purchaseOrder, setPurchaseOrder] = React.useState({
     id: null,
     data: null,
   })
+
   function handlePurchaseSelection(params) {
     const { id } = params.row
     setPurchaseOrder({ id, data: params.row })
@@ -103,7 +102,7 @@ export default React.memo(function Dashboard() {
     error: customersError,
     isStale: customersIsStale,
     refetch: customersRefetch,
-  } = useCustomersByMerchant(authToken, 'customersByMerchant')
+  } = useCustomersByMerchant(authToken)
 
   const {
     data: suppliersData,
@@ -127,9 +126,68 @@ export default React.memo(function Dashboard() {
     error: ordersError,
     isStale: ordersIsStale,
     refetch: ordersRefetch,
-  } = useOrders(authToken)
+  } = useCustomerOrders(authToken)
 
   const [comp, setComp] = React.useState('Products')
+
+  function renderComp() {
+    if (comp === 'Products') {
+      if (productsStatus === 'loading') {
+        return <Skeleton variant="rectangular" width="100%" height="100%" />
+      } else if (productsStatus === 'success') {
+        return <ProductsTable products={productsData} loading={loading} />
+      }
+    } else if (comp === 'Stock') {
+      if (stockStatus === 'loading') {
+        return <Skeleton variant="rectangular" width="100%" height="100%" />
+      } else if (stockIsStale) {
+        return <StockTable stock={stockData} stockLoading={stockLoading} />
+      } else {
+        return <StockTable stock={stockData} stockLoading={stockLoading} />
+      }
+    } else if (comp === 'Orders') {
+      return (
+        <OrdersTable
+          ordersData={ordersData}
+          authToken={authToken}
+          handleClose={handleClose}
+        />
+      )
+    } else if (comp === 'Suppliers') {
+      return <SuppliersTable suppliers={suppliersData} authToken={authToken} />
+    } else if (comp === 'Purchases') {
+      return (
+        <PurchasesTable
+          purchaseOrdersData={purchaseOrdersData}
+          handlePurchaseSelection={handlePurchaseSelection}
+          authToken={authToken}
+        />
+      )
+    } else if (comp === 'Customers') {
+      if (customersStatus === 'loading') {
+        return 'Loading...'
+      } else {
+        return <CustomersTable customers={customersData} />
+      }
+    }
+  }
+
+  React.useEffect(() => {
+    if (authToken) {
+      suppliersRefetch()
+      purchaseOrdersRefetch()
+      ordersRefetch()
+      customersRefetch()
+      productsRefetch()
+      stockRefetch()
+    }
+  }, [authToken])
+
+  React.useEffect(() => {
+    if (suppliersIsStale) {
+      suppliersRefetch()
+    }
+  }, [suppliersIsStale])
 
   React.useEffect(() => {
     if (customersIsStale) {
@@ -139,10 +197,15 @@ export default React.memo(function Dashboard() {
 
   React.useEffect(() => {
     if (productsIsStale) {
-      console.log('Products are stale')
       productsRefetch()
     }
   }, [productsIsStale])
+
+  React.useEffect(() => {
+    if (ordersIsStale) {
+      ordersRefetch()
+    }
+  }, [ordersIsStale])
 
   React.useEffect(() => {
     console.log('productsData', productsData)
@@ -171,42 +234,9 @@ export default React.memo(function Dashboard() {
     }
   }, [stockStatus])
 
-  function renderComp() {
-    if (comp === 'Products') {
-      if (productsStatus === 'loading') {
-        return <Skeleton variant="rectangular" width="100%" height="100%" />
-      } else if (productsStatus === 'success') {
-        return <ProductsTable products={productsData} loading={loading} />
-      }
-    } else if (comp === 'Stock') {
-      if (stockStatus === 'loading') {
-        return <Skeleton variant="rectangular" width="100%" height="100%" />
-      } else if (stockIsStale) {
-        return <StockTable stock={stockData} stockLoading={stockLoading} />
-      } else {
-        return <StockTable stock={stockData} stockLoading={stockLoading} />
-      }
-    } else if (comp === 'Jobs') {
-      return <OrdersTable ordersData={ordersData} authToken={authToken} />
-    } else if (comp === 'Suppliers') {
-      return <SuppliersTable suppliers={suppliersData} authToken={authToken} />
-    } else if (comp === 'Purchases') {
-      return (
-        <PurchasesTable
-          purchaseOrdersData={purchaseOrdersData}
-          handlePurchaseSelection={handlePurchaseSelection}
-          authToken={authToken}
-          setAcc={setAcc}
-        />
-      )
-    } else if (comp === 'Customers') {
-      if (customersStatus === 'loading') {
-        return 'Loading...'
-      } else {
-        return <CustomersTable customers={customersData} />
-      }
-    }
-  }
+  React.useEffect(() => {
+    console.log('customersData', customersData)
+  }, [customersData])
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -217,9 +247,17 @@ export default React.memo(function Dashboard() {
   React.useEffect(() => {
     if (comp !== 'Purchases') {
       setPurchaseOrder({ id: null, data: null })
-      setAcc(true)
     }
   }, [comp])
+
+  React.useEffect(() => {
+    stockRefetch()
+    productsRefetch()
+    customersRefetch()
+    suppliersRefetch()
+    purchaseOrdersRefetch()
+    ordersRefetch()
+  }, [])
 
   return (
     <div style={{ minHeight: '100%' }}>

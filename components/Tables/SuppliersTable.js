@@ -154,7 +154,32 @@ const EditBtn = ({ params }) => {
   )
 }
 
-export default function SuppliersTable({ suppliers, authToken }) {
+export default function SuppliersTable({ suppliers /*, authToken*/ }) {
+  const { state: authState, dispatch: authDispatch } = useAuthContext()
+  const { authToken } = authState
+
+  const [s, setS] = React.useState(null)
+
+  const {
+    data: suppliersData,
+    status: suppliersStatus,
+    error: suppliersError,
+    isStale: suppliersIsStale,
+    refetch: suppliersRefetch,
+  } = useSuppliersByMerchant(authToken)
+
+  React.useEffect(() => {
+    if (suppliersData) {
+      setS(suppliersData)
+    }
+  }, [suppliersData])
+
+  // React.useEffect(() => {
+  //   if (authToken) {
+  //     suppliersRefetch()
+  //   }
+  // }, [authToken])
+
   const [open, setOpen] = React.useState(false)
   const [idx, setIdx] = React.useState(null)
 
@@ -179,12 +204,17 @@ export default function SuppliersTable({ suppliers, authToken }) {
 
   React.useEffect(() => {
     console.log('idx', idx)
-    console.log('suppliers', suppliers)
-  }, [suppliers, idx])
+    // console.log('suppliers', suppliers)
+  }, [/*suppliers,*/ idx])
+
+  React.useEffect(() => {
+    console.log('s', s)
+  }, [s])
 
   return (
     <Box sx={{ height: 425, width: '100%' }}>
       <DataGrid
+        // rows={s !== null ? s : []}
         rows={suppliers}
         columns={columns}
         pageSize={5}

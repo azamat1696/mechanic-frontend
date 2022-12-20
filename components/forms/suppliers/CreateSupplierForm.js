@@ -25,10 +25,7 @@ export default function CreateSupplierForm({ handleClose }) {
     name: '',
   })
   const { state: authState, dispatch: authDispatch } = useAuthContext()
-  const {
-    authToken,
-    merchantDetails: { id },
-  } = authState
+  const { authToken } = authState
 
   const { refetch: suppliersRefetch, isStale: suppliersIsStale } =
     useSuppliersByMerchant(authToken)
@@ -38,9 +35,7 @@ export default function CreateSupplierForm({ handleClose }) {
     {
       onSuccess: () => {
         setLoading(!loading)
-        if (suppliersIsStale) {
-          suppliersRefetch()
-        }
+        suppliersRefetch()
       },
     }
   )

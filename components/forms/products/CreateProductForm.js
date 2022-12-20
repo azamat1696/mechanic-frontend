@@ -41,7 +41,7 @@ const cursorStyle = {
 }
 
 export default function CreateProductForm({ handleClose }) {
-  const [photo, setPhoto] = React.useState('')
+  // const [photo, setPhoto] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
   const [newProduct, setNewProduct] = React.useState({
@@ -275,7 +275,6 @@ export default function CreateProductForm({ handleClose }) {
             <LoadingButton
               color="secondary"
               onClick={() => {
-                // setLoading(!loading)
                 handleClose()
                 mutate(newProduct)
               }}

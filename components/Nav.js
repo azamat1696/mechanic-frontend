@@ -13,6 +13,7 @@ import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import MenuIcon from '@mui/icons-material/Menu'
 import AdbIcon from '@mui/icons-material/Adb'
+import Avatar from '@mui/material/Avatar'
 
 import { useTheme } from '@mui/material/styles'
 

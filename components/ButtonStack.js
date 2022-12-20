@@ -8,6 +8,7 @@ import CreateProductForm from '../components/forms/products/CreateProductForm'
 import CreateCustomerForm from './forms/customers/CreateCustomerForm'
 import CreateSupplierForm from './forms/suppliers/CreateSupplierForm'
 import PurchaseForm from './forms/purchases/PurchaseForm'
+import CreateJobForm from './forms/orders/CreateOrderForm'
 
 // Icons
 import AddIcon from '@mui/icons-material/Add'
@@ -119,7 +120,7 @@ const OrderButton = ({ handleOpen }) => {
       }}
       disableRipple={true}
     >
-      Job
+      Order
     </Button>
   )
 }
@@ -128,6 +129,7 @@ export default function DividerStack({ comp, setOpen: setO }) {
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
   return (
     <Box sx={{ width: '100%', mt: 2 }}>
       <Stack spacing={0} gap={1}>
@@ -135,7 +137,7 @@ export default function DividerStack({ comp, setOpen: setO }) {
         {comp === 'Products' && <ProductButton handleOpen={handleOpen} />}
         {comp === 'Purchases' && <PurchaseButton handleOpen={handleOpen} />}
         {comp === 'Suppliers' && <SupplierButton handleOpen={handleOpen} />}
-        {comp === 'Jobs' && <OrderButton handleOpen={handleOpen} />}
+        {comp === 'Orders' && <OrderButton handleOpen={handleOpen} />}
         <Modal
           aria-labelledby="transition-modal-title"
           aria-describedby="transition-modal-description"
@@ -160,6 +162,9 @@ export default function DividerStack({ comp, setOpen: setO }) {
               )}
               {comp === 'Purchases' && (
                 <PurchaseForm handleClose={handleClose} setO={setO} />
+              )}
+              {comp === 'Orders' && (
+                <CreateJobForm handleClose={handleClose} setO={setO} />
               )}
             </Box>
           </Fade>

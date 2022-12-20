@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
+import Divider from '@mui/material/Divider'
 
 // Icons
 import SaveIcon from '@mui/icons-material/Save'
@@ -30,6 +31,20 @@ const listStyleSecond = {
   padding: 0,
   fontSize: '0.85rem',
   listStyle: 'square',
+}
+
+const labelStyles = {
+  display: 'block',
+  margin: '0 0 8.5px 3px',
+  fontWeight: '500',
+  color: '#202024',
+  fontSize: '0.95rem',
+}
+
+const cursorStyle = {
+  '.MuiOutlinedInput-input': {
+    cursor: 'default',
+  },
 }
 
 export default React.memo(function EditCustomerForm({
@@ -145,9 +160,13 @@ export default React.memo(function EditCustomerForm({
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h5">Update Customer</Typography>
+            <Typography variant="h5">Edit Customer</Typography>
           </Grid>
           <Grid item xs={12}>
+            <Divider />
+          </Grid>
+          <Grid item xs={6}>
+            <label style={labelStyles}>First name</label>
             <TextField
               id="outlined-basic"
               variant="outlined"
@@ -162,19 +181,23 @@ export default React.memo(function EditCustomerForm({
                 })
               }}
             />
+            {validate.firstNameError.isError ? (
+              <ul style={{ margin: '0 0 0 0', padding: 0 }}>
+                {validate.firstNameError.message.map((m, i) => {
+                  return (
+                    <li
+                      key={i}
+                      style={i > 0 ? listStyleFirst : listStyleSecond}
+                    >
+                      {m}
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : null}
           </Grid>
-          {validate.firstNameError.isError ? (
-            <ul style={{ margin: '0 0 0 0', padding: 0 }}>
-              {validate.firstNameError.message.map((m, i) => {
-                return (
-                  <li key={i} style={i > 0 ? listStyleFirst : listStyleSecond}>
-                    {m}
-                  </li>
-                )
-              })}
-            </ul>
-          ) : null}
-          <Grid item xs={12}>
+          <Grid item xs={6}>
+            <label style={labelStyles}>Last name</label>
             <TextField
               id="outlined-basic"
               variant="outlined"
@@ -189,19 +212,23 @@ export default React.memo(function EditCustomerForm({
                 })
               }}
             />
+            {validate.lastNameError.isError ? (
+              <ul style={{ margin: '0 0 0 0', padding: 0 }}>
+                {validate.lastNameError.message.map((m, i) => {
+                  return (
+                    <li
+                      key={i}
+                      style={i > 0 ? listStyleFirst : listStyleSecond}
+                    >
+                      {m}
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : null}
           </Grid>
-          {validate.lastNameError.isError ? (
-            <ul style={{ margin: '0 0 0 0', padding: 0 }}>
-              {validate.lastNameError.message.map((m, i) => {
-                return (
-                  <li key={i} style={i > 0 ? listStyleFirst : listStyleSecond}>
-                    {m}
-                  </li>
-                )
-              })}
-            </ul>
-          ) : null}
-          <Grid item xs={12}>
+          <Grid item xs={6}>
+            <label style={labelStyles}>Email</label>
             <TextField
               id="outlined-basic"
               variant="outlined"
@@ -231,7 +258,8 @@ export default React.memo(function EditCustomerForm({
               </ul>
             ) : null}
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
+            <label style={labelStyles}>Telephone</label>
             <TextField
               id="outlined-basic"
               variant="outlined"
@@ -261,7 +289,7 @@ export default React.memo(function EditCustomerForm({
               </ul>
             ) : null}
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ mt: 1 }}>
             <LoadingButton
               color="secondary"
               onClick={() => mutate(customer)}

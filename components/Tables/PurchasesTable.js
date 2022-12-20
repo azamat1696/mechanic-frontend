@@ -9,8 +9,16 @@ import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import DownloadIcon from '@mui/icons-material/Download'
 
+// Hooks
 import useAuthContext from '../../hooks/useAuthContext'
 import { getPdf } from '../../hooks/usePurchaceOrderPdf'
+import {
+  deletePurchaseOrder,
+  usePurchaseOrder,
+} from '../../hooks/usePurchaseOrderHook'
+
+// React Query
+import { useMutation } from '@tanstack/react-query'
 
 const columns = [
   {
@@ -86,41 +94,26 @@ const columns = [
     headerAlign: 'center',
     renderCell: (params) => <Download params={params} />,
   },
+  {
+    field: 'delete',
+    headerName: 'Delete',
+    headerAlign: 'center',
+    align: 'right',
+    editable: false,
+    sortable: false,
+    filterable: false,
+    renderCell: () => <DeleteBtn />,
+    width: 120,
+  },
 ]
 
-const MatDel = ({ index }) => {
+const DeleteBtn = ({ params }) => {
   return (
-    <FormControlLabel
-      control={
-        <IconButton
-          aria-label="add an alarm"
-          // onClick={handleDelete}
-          data-testid={index}
-        >
-          <DeleteIcon color={'error'} />
-        </IconButton>
-      }
-    />
+    <Button variant="outlined" size="small" sx={{ borderRadius: '20px' }}>
+      Delete
+    </Button>
   )
 }
-
-// const ViewBtn = ({ params }) => {
-//   return (
-//     <Button
-//       variant="outlined"
-//       size="small"
-//       sx={{
-//         borderTopLeftRadius: '20px',
-//         borderTopRightRadius: '20px',
-//         borderBottomLeftRadius: '20px',
-//         borderBottomRightRadius: '20px',
-//         margin: '0 0 0 20px',
-//       }}
-//     >
-//       View
-//     </Button>
-//   )
-// }
 
 const StatusChip = ({ params }) => {
   const { status } = params.row
@@ -171,9 +164,30 @@ const Download = ({ params }) => {
 export default function PurchasesTable({
   purchaseOrdersData,
   handlePurchaseSelection,
-  setAcc,
 }) {
   const [pageSize, setPageSize] = React.useState(10)
+
+  const { state: authState, dispatch: authDispatch } = useAuthContext()
+  const {
+    authToken,
+    merchantDetails: { id },
+  } = authState
+
+  const {
+    data,
+    status: purchaseStatus,
+    error: purchaseError,
+    isStale: purchaseIsStale,
+    refetch: purchaseRefetch,
+  } = usePurchaseOrder(authToken)
+
+  const { mutate } = useMutation((i) => deletePurchaseOrder(authToken, i), {
+    onSuccess: () => {
+      purchaseRefetch()
+    },
+  })
+
+  const handleDelete = (i) => mutate(i)
 
   return (
     <Box sx={{ height: 600, width: '100%' }}>
@@ -223,8 +237,10 @@ export default function PurchasesTable({
         disableSelectionOnClick
         experimentalFeatures={{ newEditingApi: true }}
         onCellClick={(params) => {
-          setAcc(false)
           handlePurchaseSelection(params)
+          if (params.field === 'delete') {
+            handleDelete(params.id)
+          }
         }}
       />
     </Box>

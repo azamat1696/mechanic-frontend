@@ -16,7 +16,7 @@ export default function Home() {
   const {
     authToken,
     isAuthenticated,
-    merchantDetails: { id },
+    // merchantDetails: { id },
   } = authState
 
   const [login, setLogin] = React.useState({

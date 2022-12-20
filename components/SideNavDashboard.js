@@ -74,8 +74,8 @@ export default function BasicList({ comp, setComp }) {
               sx={btnStyle}
             >
               <ListItemText
-                primary="Jobs"
-                sx={comp === 'Jobs' ? active : inActive}
+                primary="Orders"
+                sx={comp === 'Orders' ? active : inActive}
               />
             </ListItemButton>
           </ListItem>

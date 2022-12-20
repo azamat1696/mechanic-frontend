@@ -24,7 +24,7 @@ import {
   useCustomersByMerchant,
 } from '../../hooks/useAsyncHooks'
 import useRenderCount from '../../hooks/useRenderCount'
-
+import { useStockByMerchantData } from '../../hooks/useAsyncHooks'
 // React Query
 import { useMutation } from '@tanstack/react-query'
 
@@ -33,11 +33,11 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 650,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
+  p: 3,
 }
 
 const columns = [
@@ -150,7 +150,10 @@ const DeleteBtn = () => {
 
 export default React.memo(function CustomersTable({ customers }) {
   const { state: authState } = useAuthContext()
-  const { authToken } = authState
+  const {
+    authToken,
+    merchantDetails: { id },
+  } = authState
 
   const [open, setOpen] = React.useState(false)
 
@@ -161,10 +164,12 @@ export default React.memo(function CustomersTable({ customers }) {
   const handleDelete = (i) => mutate(i)
 
   const { refetch: customersRefetch } = useCustomersByMerchant(authToken)
+  const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
 
   const { mutate } = useMutation((i) => deleteCustomer(authToken, i), {
     onSuccess: () => {
       customersRefetch()
+      stockRefetch()
     },
   })
 
