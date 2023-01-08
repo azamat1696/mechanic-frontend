@@ -13,8 +13,9 @@ import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import MenuIcon from '@mui/icons-material/Menu'
 import AdbIcon from '@mui/icons-material/Adb'
+import Avatar from '@mui/material/Avatar'
 
-import { useTheme } from '@mui/material/styles'
+// import { useTheme } from '@mui/material/styles'
 
 // Components
 import LoginModal from '../components/LoginModal'
@@ -22,7 +23,7 @@ import Switch from '../components/Switch'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
-import useThemeContext from '../hooks/useThemeContext'
+// import useThemeContext from '../hooks/useThemeContext'
 
 const pages = [
   /*'test'*/
@@ -51,13 +52,13 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
     setAnchorElUser(null)
   }
 
-  const { theme, setTheme } = useThemeContext()
+  // const { theme, setTheme } = useThemeContext()
 
   return (
     <AppBar
       position="static"
       sx={{
-        backgroundColor: theme === true ? '#3c5f83' : '#444d56',
+        backgroundColor: '#444d56', // theme === true ? '#3c5f83' : '#444d56',
       }}
     >
       <Container maxWidth="md">
@@ -73,12 +74,13 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
-              letterSpacing: '.3rem',
+              letterSpacing: '.2rem',
               color: 'inherit',
               textDecoration: 'none',
+              textTransform: 'uppercase',
             }}
           >
-            LOGO
+            Mechanic
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -135,9 +137,10 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
+              textTransform: 'uppercase',
             }}
           >
-            LOGO
+            Mechanic
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map(
@@ -155,10 +158,11 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
                 )
             )}
           </Box>
-          <Box sx={{ flexGrow: 0, ml: 5 }}>
+          {/* <Box sx={{ flexGrow: 0, ml: 5 }}>
             <Switch theme={theme} setTheme={setTheme} />
-          </Box>
+          </Box> */}
 
+          <Box sx={{ mb: 0.5, mr: 3 }}>{authState.merchantDetails.name}</Box>
           <Box sx={{ flexGrow: 0 }}>
             <LoginModal
               login={login}

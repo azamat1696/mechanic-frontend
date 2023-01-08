@@ -4,6 +4,10 @@ const nextConfig = {
   images: {
     domains: ['localhost'],
   },
+  env: {
+    mapbox_key:
+      'pk.eyJ1IjoiaGFsODciLCJhIjoiY2xjZGVyMDMwNnhtNTN3a2VlZWNrZG9jbyJ9.mos3-KYGU2Ibk88_STmJtw',
+  },
   swcMinify: true,
 }
 

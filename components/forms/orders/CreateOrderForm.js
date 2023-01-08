@@ -12,64 +12,51 @@ import LoadingButton from '@mui/lab/LoadingButton'
 
 // Hooks
 import useAuthContext from '../../../hooks/useAuthContext'
-import { useSuppliersByMerchant } from '../../../hooks/useSuppliersHook'
 import {
-  createPurchaseOrder,
-  usePurchaseOrder,
-} from '../../../hooks/usePurchaseOrderHook'
-import { useStockByMerchantData } from '../../../hooks/useAsyncHooks'
+  useCustomersByMerchant,
+  useProductsByMerchantData,
+  useStockByMerchantData,
+} from '../../../hooks/useAsyncHooks'
+import {
+  createCustomerOrder,
+  useCustomerOrders,
+} from '../../../hooks/useOrdersHook'
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
 
-export default function PurchaseForm({ handleClose, setO: setOpen }) {
+export default function CreateOrderForm({ handleClose }) {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const {
     authToken,
     merchantDetails: { id },
   } = authState
 
-  // STATE
+  const [loading, setLoading] = React.useState(false)
+
+  const { data } = useCustomersByMerchant(authToken)
+  const { data: productsData } = useProductsByMerchantData(authToken)
+
   const [rows, setRows] = React.useState({
-    supplierId: '',
     products: [],
   })
-  const [supplier, setSupplier] = React.useState([])
-  const [activeSupplier, setActiveSupplier] = React.useState(undefined)
-  const [activeSP, setActiveSP] = React.useState([])
   const [count, setCount] = React.useState(0)
   const [rowBtn, setRowBtn] = React.useState(true)
-  const [loading, setLoading] = React.useState(false)
-  // STATE
+  const [customerList, setCustomerList] = React.useState(null)
+  const [active, setActive] = React.useState(null)
 
-  // REACT QUERY
-  const {
-    data,
-    refetch: suppliersRefetch,
-    isStale: suppliersIsStale,
-  } = useSuppliersByMerchant(authToken)
-
-  const {
-    data: poData,
-    isStale: poIsStale,
-    refetch,
-  } = usePurchaseOrder(authToken)
-
-  const {
-    // data: ordersData,
-    // status: ordersStatus,
-    // error: ordersError,
-    // isStale: ordersIsStale,
-    refetch: stockRefetch,
-  } = useStockByMerchantData(authToken, id)
-  // REACT QUERY
+  function handleCustomerChange(e) {
+    const found = customerList.find((c) => c.label === e.target.innerText)
+    console.log('found', found)
+    setActive(found)
+  }
 
   function addRow() {
     setRows({
       ...rows,
       products: [
         ...rows.products,
-        { label: '', id: count, quantity: '', productId: '', price: '' },
+        { label: '', id: count, quantity: '', productId: '' },
       ],
     })
     setCount(count + 1)
@@ -81,46 +68,20 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
     setRows({ ...rows, products: r })
   }
 
-  function handleSupplierChange(e) {
+  function handleProduct(e, row) {
     const { innerText } = e.target
-    console.log('test', activeSupplier, innerText)
-
-    const foundSupplier = supplier.find((s) => s.name === innerText)
-    console.log('supplierId', foundSupplier.id, supplier)
-
-    if (activeSupplier !== innerText) {
-      setActiveSupplier(innerText)
-      setRows({
-        ...rows,
-        supplierId: foundSupplier.id,
-        products: [],
-      })
-    } else if (activeSupplier === innerText) {
-      setActiveSupplier(innerText)
-    }
-  }
-
-  function handleSupplierProducts(e, row) {
-    const { innerText, value } = e.target
-    const foundP = activeSP.find((p) => p.name === innerText)
-    const foundR = rows.products.find((r) => r.id === row.id)
-
-    // console.log("id's", row.id, i)
-    // console.log('foundProduct', foundP)
-    // console.log('foundRow', foundR)
-
+    const found = products.find((p) => p.name === innerText)
+    console.log('found', found)
     setRows({
       ...rows,
       products: [
-        ...rows.products.map((r) => {
-          console.log('r', r)
+        ...rows.products.map((r, i) => {
           if (r.id === row.id) {
             return {
               ...r,
               label: innerText,
-              productId: foundP.id,
-              supplierId: foundP.supplierId,
-              price: foundP.retailPrice,
+              productId: found.id,
+              price: found.retailPrice,
             }
           } else {
             return {
@@ -153,83 +114,82 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
     })
   }
 
-  const { mutate } = useMutation(() => createPurchaseOrder(authToken, rows), {
-    onSuccess: () => {
-      setLoading(!loading)
-      setOpen(true)
-      refetch()
-      stockRefetch()
-    },
-  })
+  function handlePriceChange(e, row) {
+    const { value } = e.target
+    setRows({
+      ...rows,
+      products: [
+        ...rows.products.map((r) => {
+          if (r.id === row.id) {
+            return {
+              ...r,
+              price: Number(value),
+            }
+          } else {
+            return {
+              ...r,
+            }
+          }
+        }),
+      ],
+    })
+  }
 
-  // React.useEffect(() => {
-  //   console.log('poData', poData)
-  // }, [poData])
+  const { refetch: ordersRefetch } = useCustomerOrders(authToken)
+  const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
 
-  // React.useEffect(() => {
-  //   console.log('rows', rows)
-  // }, [rows])
+  const { mutate } = useMutation(
+    () => createCustomerOrder(authToken, rows, active.id),
+    {
+      onSuccess: () => {
+        setLoading(!loading)
+        ordersRefetch()
+        stockRefetch()
+      },
+    }
+  )
+
+  const [products, setProducts] = React.useState(null)
+
+  React.useEffect(() => {
+    const { products } = productsData
+    console.log('products', products)
+    const p = products.map((p) => {
+      return {
+        ...p,
+        label: p.name,
+      }
+    })
+    setProducts(p)
+  }, [productsData])
+
+  React.useEffect(() => {
+    console.log('products', products)
+  }, [products])
 
   React.useEffect(() => {
     data &&
-      setSupplier(
+      setCustomerList(
         data.map((d) => {
-          console.log('d', d)
           return {
             ...d,
-            label: d.name,
-            supplierId: d.id,
+            label: `${d.firstName} ${d.lastName}`,
           }
         })
       )
   }, [data])
 
   React.useEffect(() => {
-    suppliersRefetch()
-  }, [])
-
-  // React.useEffect(() => {
-  //   console.log('supplier', supplier)
-  // }, [supplier])
+    console.log('active', active)
+  }, [active])
 
   React.useEffect(() => {
-    let actSP
-    if (activeSupplier !== undefined) {
-      console.log('x supplier', supplier)
-      actSP = supplier.filter((s) => {
-        if (s.name === activeSupplier) {
-          console.log('matched', s.name, activeSupplier)
-          return s
-        }
-      })
-
-      console.log('x actSP', actSP)
-
-      const productEdits = actSP[0].products.map((p) => {
-        return {
-          ...p,
-          label: p.name,
-        }
-      })
-      setActiveSP(productEdits)
-    }
-  }, [activeSupplier, supplier])
-
-  // React.useEffect(() => {
-  //   console.log('activeSupplier', activeSupplier)
-  // }, [activeSupplier])
-
-  React.useEffect(() => {
-    console.log('activeSP', activeSP)
-  }, [activeSP])
+    console.log('customerList', customerList)
+  }, [customerList])
 
   React.useEffect(() => {
     console.log('rows', rows)
   }, [rows])
-  // React.useEffect(() => {
-  //   console.log('test rowBtn', rowBtn)
-  //   console.log('test activeSupplier', activeSupplier)
-  // }, [rowBtn, activeSupplier, rows.products])
 
   return (
     <Grid container spacing={2} gap={0} style={{ margin: '20px 0 0 20px' }}>
@@ -240,12 +200,13 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
           component="div"
           sx={{ mb: 3.5, fontSize: '28px' }}
         >
-          Purchase Order
+          Create Order
         </Typography>
+
         <Autocomplete
           disablePortal
           id="combo-box-demo"
-          options={supplier}
+          options={customerList}
           sx={{
             width: 250,
             '& .MuiAutocomplete-input': { height: '17.5px' },
@@ -253,7 +214,7 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Supplier"
+              label="Customer"
               InputLabelProps={{
                 style: {
                   fontSize: '0.9rem',
@@ -261,7 +222,7 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
               }}
             />
           )}
-          onChange={(e) => handleSupplierChange(e)}
+          onChange={(e) => handleCustomerChange(e)}
         />
         <Button
           variant="outlined"
@@ -275,19 +236,17 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
       <Grid item xs={12}>
         {rows.products !== []
           ? rows.products.map((row, i) => {
-              // console.log('Row Index', i)
               return (
                 <div
                   key={row.id}
-                  style={{ display: 'flex', marginBottom: '14px' }}
+                  style={{ display: 'flex', marginBottom: '15px' }}
                 >
-                  {/* PRODUCT */}
                   <Autocomplete
                     disablePortal
                     id="combo-box-demo"
-                    options={activeSP}
+                    options={products}
                     sx={{
-                      width: 250,
+                      width: 200,
                       '& .MuiAutocomplete-input': { height: '17.5px' },
                     }}
                     renderInput={(params) => (
@@ -301,16 +260,15 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
                         }}
                       />
                     )}
-                    onChange={(e) => handleSupplierProducts(e, row)}
+                    onChange={(e) => handleProduct(e, row)}
                   />
-                  {/* QUANTITY */}
                   <TextField
                     id="filled-number"
                     label="Quantity"
                     type="number"
                     sx={{
                       ml: 1,
-                      width: 125,
+                      width: 150,
                       '& .MuiFilledInput-input': {
                         height: '17.5px',
                       },
@@ -324,6 +282,7 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
                     }}
                     InputProps={{ inputProps: { min: 0, defaultValue: 0 } }}
                     variant="filled"
+                    value={row.quantity}
                     onChange={(e) => handleQtyChange(e, row)}
                   />
                   <TextField
@@ -332,7 +291,7 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
                     type="number"
                     sx={{
                       ml: 1,
-                      width: 125,
+                      width: 150,
                       '& .MuiFilledInput-input': {
                         height: '17.5px',
                       },
@@ -344,13 +303,11 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
                         fontSize: '0.9rem',
                       },
                     }}
-                    disabled={true}
                     InputProps={{ inputProps: { min: 0, defaultValue: 0 } }}
                     variant="filled"
-                    value={rows.products[row.id].price}
-                    // onChange={(e) => handlePriceChange(e, row)}
+                    value={row.price}
+                    onChange={(e) => handlePriceChange(e, row)}
                   />
-                  {/* DELETE ROW */}
                   <Button
                     variant="outlined"
                     onClick={() => deleteRow(i)}
@@ -361,24 +318,26 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
                 </div>
               )
             })
-          : 'no rows'}
+          : null}
       </Grid>
       <Grid item xs={12}>
-        {/* SEND ORDER */}
+        {/* SEND JOB */}
         <LoadingButton
           size="small"
           onClick={() => {
             handleClose()
+            console.log('mutation triggered')
             mutate()
           }}
           endIcon={<SendIcon />}
-          disabled={rows.products.length === 0}
+          //   disabled={rows.products.length === 0}
           loading={loading}
           loadingPosition="end"
           variant="contained"
         >
           Send
         </LoadingButton>
+        {/* SEND JOB */}
       </Grid>
     </Grid>
   )

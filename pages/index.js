@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 // Components
 import Nav from '../components/Nav'
 import Map from '../components/Map'
+import MapBox from '../components/MapBox'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
@@ -16,7 +17,7 @@ export default function Home() {
   const {
     authToken,
     isAuthenticated,
-    merchantDetails: { id },
+    // merchantDetails: { id },
   } = authState
 
   const [login, setLogin] = React.useState({
@@ -73,9 +74,5 @@ export default function Home() {
     }
   }, [isAuthenticated, router])
 
-  return (
-    <div>
-      <Map />
-    </div>
-  )
+  return <MapBox />
 }

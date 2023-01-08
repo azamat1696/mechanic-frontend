@@ -27,6 +27,12 @@ import { useMutation } from '@tanstack/react-query'
 // Components
 import EditSupplierForm from '../forms/suppliers/EditSupplierForm'
 
+const fontStyle = {
+  fontFamily: "'Karla', sans-serif;",
+  fontWeight: 400,
+  fontSize: '0.9rem',
+}
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -43,7 +49,7 @@ const columns = [
   {
     field: 'id',
     headerName: 'ID',
-    width: 150,
+    width: 80,
     hide: false,
     editable: false,
     sortable: false,
@@ -62,17 +68,7 @@ const columns = [
     align: 'center',
     headerAlign: 'center',
   },
-  {
-    field: 'delete',
-    headerName: 'Delete',
-    editable: false,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => <DeleteBtn params={params} />,
-    align: 'right',
-    headerAlign: 'center',
-    width: 100,
-  },
+
   {
     field: 'edit',
     headerName: 'Edit',
@@ -82,7 +78,18 @@ const columns = [
     renderCell: (params) => <EditBtn params={params} />,
     align: 'right',
     headerAlign: 'center',
-    width: 100,
+    width: 90,
+  },
+  {
+    field: 'delete',
+    headerName: 'Delete',
+    editable: false,
+    sortable: false,
+    filterable: false,
+    renderCell: (params) => <DeleteBtn params={params} />,
+    align: 'right',
+    headerAlign: 'center',
+    width: 90,
   },
 ]
 
@@ -112,6 +119,7 @@ const MatDel = ({ index }) => {
           aria-label="add an alarm"
           onClick={handleDelete}
           data-testid={index}
+          sx={{ '&:hover': { backgroundColor: 'transparent' } }}
         >
           <DeleteIcon color={'error'} />
         </IconButton>
@@ -121,7 +129,7 @@ const MatDel = ({ index }) => {
 }
 
 const DeleteBtn = ({ params }) => {
-  useRenderCount('DeleteBtn ST')
+  // useRenderCount('DeleteBtn ST')
 
   return (
     <div style={{ cursor: 'pointer' }}>
@@ -137,6 +145,7 @@ const MatEdit = ({ index }) => {
         <IconButton
           color="secondary"
           aria-label="add an alarm"
+          sx={{ '&:hover': { backgroundColor: 'transparent' } }}
           // onClick={() => handleOpen(index)}
         >
           <EditIcon color={'info'} fontSize={'12px'} />
@@ -154,7 +163,32 @@ const EditBtn = ({ params }) => {
   )
 }
 
-export default function SuppliersTable({ suppliers, authToken }) {
+export default function SuppliersTable({ suppliers }) {
+  const { state: authState, dispatch: authDispatch } = useAuthContext()
+  const { authToken } = authState
+
+  const [s, setS] = React.useState(null)
+
+  const {
+    data: suppliersData,
+    status: suppliersStatus,
+    error: suppliersError,
+    isStale: suppliersIsStale,
+    refetch: suppliersRefetch,
+  } = useSuppliersByMerchant(authToken)
+
+  React.useEffect(() => {
+    if (suppliersData) {
+      setS(suppliersData)
+    }
+  }, [suppliersData])
+
+  // React.useEffect(() => {
+  //   if (authToken) {
+  //     suppliersRefetch()
+  //   }
+  // }, [authToken])
+
   const [open, setOpen] = React.useState(false)
   const [idx, setIdx] = React.useState(null)
 
@@ -179,12 +213,17 @@ export default function SuppliersTable({ suppliers, authToken }) {
 
   React.useEffect(() => {
     console.log('idx', idx)
-    console.log('suppliers', suppliers)
-  }, [suppliers, idx])
+    // console.log('suppliers', suppliers)
+  }, [/*suppliers,*/ idx])
+
+  React.useEffect(() => {
+    console.log('s', s)
+  }, [s])
 
   return (
-    <Box sx={{ height: 425, width: '100%' }}>
+    <Box sx={{ height: 500 }}>
       <DataGrid
+        // rows={s !== null ? s : []}
         rows={suppliers}
         columns={columns}
         pageSize={5}
@@ -196,17 +235,15 @@ export default function SuppliersTable({ suppliers, authToken }) {
           Toolbar: GridToolbar,
         }}
         componentsProps={{
-          panel: {
-            sx: {
-              '& .MuiTypography-root': {
-                color: '#2e2e2e',
-                fontSize: 15,
-              },
-            },
-          },
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
+            sx: {
+              '& .MuiButton-root': {
+                color: '#4071bb',
+                fontSize: 12,
+              },
+            },
           },
         }}
         sx={{
@@ -223,8 +260,10 @@ export default function SuppliersTable({ suppliers, authToken }) {
           '& .MuiInputBase-root-MuiInput-root': {
             color: 'red',
           },
+          ...fontStyle,
         }}
         rowsPerPageOptions={[5]}
+        rowHeight={42}
         experimentalFeatures={{ newEditingApi: true }}
         onCellClick={(params) => params.field === 'edit' && handleOpen(params)}
       />

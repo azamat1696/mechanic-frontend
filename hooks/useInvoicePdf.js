@@ -14,7 +14,7 @@ export async function getPdf(authToken, id) {
   }
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/purchase-order',
+      'http://localhost:8000/api/merchants/invoice',
       myInit
     )
     const myFile = await res.arrayBuffer()
@@ -24,6 +24,6 @@ export async function getPdf(authToken, id) {
   }
 }
 
-export function usePurchaseOrder(token, id) {
+export function useInvoice(token, id) {
   return useQuery([`purchaseOrder`], () => getPdf(token, id))
 }

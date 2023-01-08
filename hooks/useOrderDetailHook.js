@@ -2,36 +2,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 // Fetch Orders Data
-export async function fetchOrdersByMerchant(token) {
-  const myInit = {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    mode: 'cors',
-    cache: 'default',
-  }
-  try {
-    const res = await fetch(
-      'http://localhost:8000/api/merchants/view-orders',
-      myInit
-    )
-    return await res.json()
-  } catch (err) {
-    console.log('err', err)
-  }
-}
-
-export function useCustomerOrders(token) {
-  return useQuery([`customerOrdersByMerchant`], () =>
-    fetchOrdersByMerchant(token)
-  )
-}
-// Fetch Orders Data
-
-export async function createCustomerOrder(token, products, customer) {
-  console.log('async create customer triggered')
+export async function fetchOrderDetailByOrder(token, id) {
   const myInit = {
     method: 'POST',
     headers: {
@@ -40,28 +11,32 @@ export async function createCustomerOrder(token, products, customer) {
     },
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify({
-      customerId: customer,
-      products: products.products,
-      description: 'Service',
-      name: 'test',
-    }),
+    body: JSON.stringify({ orderId: id }),
   }
-
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/create-order',
+      'http://localhost:8000/api/merchants/order-detail',
       myInit
     )
-    const data = await res.json()
-    console.log('Order Created Response', data)
-    return data
+    return await res.json()
   } catch (err) {
     console.log('err', err)
   }
 }
 
-export async function deleteCustomerOrder(token, id) {
+export function useOrderDetailsData(token, id) {
+  return useQuery(
+    [`orderDetailByOrder`],
+    () => fetchOrderDetailByOrder(token, id),
+    {
+      cacheTime: 0,
+    }
+  )
+}
+// Fetch Orders Data
+
+// Delete OrderDetail
+export async function deleteOrderDetail(token, id) {
   const myInit = {
     method: 'POST',
     headers: {
@@ -75,7 +50,7 @@ export async function deleteCustomerOrder(token, id) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/delete-order',
+      'http://localhost:8000/api/merchants/delete-order-detail',
       myInit
     )
     return await res.json()
@@ -83,3 +58,35 @@ export async function deleteCustomerOrder(token, id) {
     console.log('err', err)
   }
 }
+// Delete OrderDetail
+
+// Update Order Detail
+export async function updateOrderDetail(token, updateProducts) {
+  const myInit = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updateProducts),
+    mode: 'cors',
+    cache: 'default',
+  }
+
+  try {
+    const res = await fetch(
+      'http://localhost:8000/api/merchants/update-order-detail',
+      myInit
+    )
+    return await res.json()
+  } catch (err) {
+    console.log('err', err)
+  }
+}
+
+export function useUpdateOrderDetail(token, updateProducts) {
+  return useQuery([`updateOrderDetail`], () =>
+    updateOrderDetail(token, updateProducts)
+  )
+}
+// Update Order Detail

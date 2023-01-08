@@ -5,11 +5,10 @@ import { useRouter } from 'next/router'
 import StockTable from '../components/Tables/StockTable'
 import ProductsTable from '../components/Tables/ProductsTable'
 import CustomersTable from '../components/Tables/CustomersTable'
-import SideNavDashboard from '../components/SideNavDashboard'
 import PurchasesTable from '../components/Tables/PurchasesTable'
 import SuppliersTable from '../components/Tables/SuppliersTable'
 import OrdersTable from '../components/Tables/OrdersTable'
-import PurchaseOrder from '../components/order-view/PurchaseOrder'
+import NestedList from '../components/NestedList'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
@@ -20,17 +19,12 @@ import {
 } from '../hooks/useAsyncHooks'
 import { useSuppliersByMerchant } from '../hooks/useSuppliersHook'
 import { usePurchaseOrder } from '../hooks/usePurchaseOrderHook'
-import { useOrders } from '../hooks/useOrdersHook'
+import { useCustomerOrders } from '../hooks/useOrdersHook'
 
 // Material UI
 import { styled } from '@mui/material/styles'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
-import ButtonStack from '../components/ButtonStack'
-
-import Snackbar from '@mui/material/Snackbar'
-import MuiAlert from '@mui/material/Alert'
-import Button from '@mui/material/Button'
 import Skeleton from '@mui/material/Skeleton'
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -41,33 +35,19 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }))
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
-})
-
 export default React.memo(function Dashboard() {
   const router = useRouter()
-  // Alert
-  const [open, setOpen] = React.useState(false)
-  const handleClick = () => setOpen(true)
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setOpen(false)
-  }
-  // Alert
 
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const [loading, setLoading] = React.useState(false)
   const [stockLoading, setStockLoading] = React.useState(false)
 
   //
-  const [acc, setAcc] = React.useState(true)
   const [purchaseOrder, setPurchaseOrder] = React.useState({
     id: null,
     data: null,
   })
+
   function handlePurchaseSelection(params) {
     const { id } = params.row
     setPurchaseOrder({ id, data: params.row })
@@ -103,7 +83,7 @@ export default React.memo(function Dashboard() {
     error: customersError,
     isStale: customersIsStale,
     refetch: customersRefetch,
-  } = useCustomersByMerchant(authToken, 'customersByMerchant')
+  } = useCustomersByMerchant(authToken)
 
   const {
     data: suppliersData,
@@ -127,9 +107,62 @@ export default React.memo(function Dashboard() {
     error: ordersError,
     isStale: ordersIsStale,
     refetch: ordersRefetch,
-  } = useOrders(authToken)
+  } = useCustomerOrders(authToken)
 
   const [comp, setComp] = React.useState('Products')
+
+  function renderComp() {
+    if (comp === 'Products') {
+      if (productsStatus === 'loading') {
+        return <Skeleton variant="rectangular" width="100%" height="100%" />
+      } else if (productsStatus === 'success') {
+        return <ProductsTable products={productsData} loading={loading} />
+      }
+    } else if (comp === 'Stock') {
+      if (stockStatus === 'loading') {
+        return <Skeleton variant="rectangular" width="100%" height="100%" />
+      } else if (stockIsStale) {
+        return <StockTable stock={stockData} stockLoading={stockLoading} />
+      } else {
+        return <StockTable stock={stockData} stockLoading={stockLoading} />
+      }
+    } else if (comp === 'Orders') {
+      return <OrdersTable ordersData={ordersData} authToken={authToken} />
+    } else if (comp === 'Suppliers') {
+      return <SuppliersTable suppliers={suppliersData} authToken={authToken} />
+    } else if (comp === 'Purchases') {
+      return (
+        <PurchasesTable
+          purchaseOrdersData={purchaseOrdersData}
+          handlePurchaseSelection={handlePurchaseSelection}
+          authToken={authToken}
+        />
+      )
+    } else if (comp === 'Customers') {
+      if (customersStatus === 'loading') {
+        return 'Loading...'
+      } else {
+        return <CustomersTable customers={customersData} />
+      }
+    }
+  }
+
+  React.useEffect(() => {
+    if (authToken) {
+      suppliersRefetch()
+      purchaseOrdersRefetch()
+      ordersRefetch()
+      customersRefetch()
+      productsRefetch()
+      stockRefetch()
+    }
+  }, [authToken])
+
+  React.useEffect(() => {
+    if (suppliersIsStale) {
+      suppliersRefetch()
+    }
+  }, [suppliersIsStale])
 
   React.useEffect(() => {
     if (customersIsStale) {
@@ -139,10 +172,15 @@ export default React.memo(function Dashboard() {
 
   React.useEffect(() => {
     if (productsIsStale) {
-      console.log('Products are stale')
       productsRefetch()
     }
   }, [productsIsStale])
+
+  React.useEffect(() => {
+    if (ordersIsStale) {
+      ordersRefetch()
+    }
+  }, [ordersIsStale])
 
   React.useEffect(() => {
     console.log('productsData', productsData)
@@ -171,42 +209,9 @@ export default React.memo(function Dashboard() {
     }
   }, [stockStatus])
 
-  function renderComp() {
-    if (comp === 'Products') {
-      if (productsStatus === 'loading') {
-        return <Skeleton variant="rectangular" width="100%" height="100%" />
-      } else if (productsStatus === 'success') {
-        return <ProductsTable products={productsData} loading={loading} />
-      }
-    } else if (comp === 'Stock') {
-      if (stockStatus === 'loading') {
-        return <Skeleton variant="rectangular" width="100%" height="100%" />
-      } else if (stockIsStale) {
-        return <StockTable stock={stockData} stockLoading={stockLoading} />
-      } else {
-        return <StockTable stock={stockData} stockLoading={stockLoading} />
-      }
-    } else if (comp === 'Jobs') {
-      return <OrdersTable ordersData={ordersData} authToken={authToken} />
-    } else if (comp === 'Suppliers') {
-      return <SuppliersTable suppliers={suppliersData} authToken={authToken} />
-    } else if (comp === 'Purchases') {
-      return (
-        <PurchasesTable
-          purchaseOrdersData={purchaseOrdersData}
-          handlePurchaseSelection={handlePurchaseSelection}
-          authToken={authToken}
-          setAcc={setAcc}
-        />
-      )
-    } else if (comp === 'Customers') {
-      if (customersStatus === 'loading') {
-        return 'Loading...'
-      } else {
-        return <CustomersTable customers={customersData} />
-      }
-    }
-  }
+  React.useEffect(() => {
+    console.log('customersData', customersData)
+  }, [customersData])
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -217,35 +222,34 @@ export default React.memo(function Dashboard() {
   React.useEffect(() => {
     if (comp !== 'Purchases') {
       setPurchaseOrder({ id: null, data: null })
-      setAcc(true)
     }
   }, [comp])
 
+  React.useEffect(() => {
+    stockRefetch()
+    productsRefetch()
+    customersRefetch()
+    suppliersRefetch()
+    purchaseOrdersRefetch()
+    ordersRefetch()
+  }, [])
+
   return (
-    <div style={{ minHeight: '100%' }}>
-      {/* <Button onClick={handleClick}>OpenSB</Button> */}
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        sx={{ zIndex: 100000 }}
-      >
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          Purchase Order Successfully Created!
-        </Alert>
-      </Snackbar>
+    <div style={{ minHeight: '100%', marginTop: '20px' }}>
       <Grid
         container
-        spacing={2}
-        sx={{ mt: 2, width: '95%', margin: '0 auto', height: '100%' }}
+        spacing={0}
+        gap={3}
+        sx={{
+          width: '90%',
+          margin: '0 auto',
+          height: '100%',
+        }}
       >
-        <Grid item xs={1.75}>
-          <Item>
-            <SideNavDashboard comp={comp} setComp={setComp} />
-          </Item>
-          <ButtonStack comp={comp} setOpen={setOpen} />
+        <Grid item xs={1.5}>
+          <NestedList comp={comp} setComp={setComp} />
         </Grid>
-        <Grid item xs={10}>
+        <Grid item xs={9}>
           <Item sx={{ ml: 1 }}>{renderComp()}</Item>
         </Grid>
       </Grid>

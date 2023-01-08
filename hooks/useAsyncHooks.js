@@ -20,6 +20,7 @@ export async function fetchStockByMerchant(token, merchId) {
     console.log('err', err)
   }
 }
+
 export function useStockByMerchantData(token, merchId) {
   return useQuery([`stockByMerchant`], () =>
     fetchStockByMerchant(token, merchId)
@@ -49,6 +50,7 @@ export async function fetchProductsByMerchant(token) {
     console.log('err', err)
   }
 }
+
 export function useProductsByMerchantData(token) {
   return useQuery([`productsByMerchant`], () => fetchProductsByMerchant(token))
 }
@@ -157,7 +159,9 @@ export async function fetchCustomersByMerchant(token) {
       'http://localhost:8000/api/merchants/customers',
       myInit
     )
-    return await res.json()
+    const data = await res.json()
+    console.log('data', data)
+    return data
   } catch (err) {
     console.log('error', err)
   }

@@ -8,6 +8,12 @@ import LinearProgress from '@mui/material/LinearProgress'
 import Skeleton from '@mui/material/Skeleton'
 import Chip from '@mui/material/Chip'
 
+const fontStyle = {
+  fontFamily: "'Karla', sans-serif;",
+  fontWeight: 400,
+  fontSize: '0.9rem',
+}
+
 const columns = [
   {
     field: 'productId',
@@ -150,17 +156,15 @@ export default React.memo(function DataTable({ stock, stockLoading }) {
           LoadingOverlay: LinearProgress,
         }}
         componentsProps={{
-          panel: {
-            sx: {
-              '& .MuiTypography-root': {
-                color: '#2e2e2e',
-                fontSize: 15,
-              },
-            },
-          },
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
+            sx: {
+              '& .MuiButton-root': {
+                color: '#4071bb',
+                fontSize: 12,
+              },
+            },
           },
         }}
         sx={{
@@ -177,10 +181,12 @@ export default React.memo(function DataTable({ stock, stockLoading }) {
           '& .MuiInputBase-root-MuiInput-root': {
             color: 'red',
           },
+          ...fontStyle,
         }}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}
+        rowHeight={47.5}
         loading={stockLoading}
       />
     </Box>

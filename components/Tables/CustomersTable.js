@@ -24,27 +24,33 @@ import {
   useCustomersByMerchant,
 } from '../../hooks/useAsyncHooks'
 import useRenderCount from '../../hooks/useRenderCount'
-
+import { useStockByMerchantData } from '../../hooks/useAsyncHooks'
 // React Query
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+
+const fontStyle = {
+  fontFamily: "'Karla', sans-serif;",
+  fontWeight: 400,
+  fontSize: '0.9rem',
+}
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 650,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
+  p: 3,
 }
 
 const columns = [
   {
     field: 'id',
     headerName: 'ID',
-    width: 100,
+    width: 80,
     align: 'center',
     headerAlign: 'center',
     hide: false,
@@ -55,7 +61,7 @@ const columns = [
   {
     field: 'firstName',
     headerName: 'First name',
-    width: 150,
+    width: 110,
     hide: false,
     editable: false,
     sortable: true,
@@ -66,7 +72,7 @@ const columns = [
   {
     field: 'lastName',
     headerName: 'Last name',
-    width: 150,
+    width: 110,
     hide: false,
     editable: false,
     sortable: true,
@@ -96,17 +102,7 @@ const columns = [
     align: 'center',
     headerAlign: 'center',
   },
-  {
-    field: 'delete',
-    headerName: 'Delete',
-    editable: false,
-    sortable: false,
-    filterable: false,
-    renderCell: () => <DeleteBtn />,
-    align: 'right',
-    headerAlign: 'center',
-    width: 100,
-  },
+
   {
     field: 'edit',
     headerName: 'Edit',
@@ -116,7 +112,18 @@ const columns = [
     renderCell: () => <EditBtn />,
     align: 'right',
     headerAlign: 'center',
-    width: 100,
+    width: 90,
+  },
+  {
+    field: 'delete',
+    headerName: 'Delete',
+    editable: false,
+    sortable: false,
+    filterable: false,
+    renderCell: () => <DeleteBtn />,
+    align: 'right',
+    headerAlign: 'center',
+    width: 90,
   },
 ]
 
@@ -125,7 +132,11 @@ const EditBtn = () => {
     <div style={{ cursor: 'pointer' }}>
       <FormControlLabel
         control={
-          <IconButton color="secondary" aria-label="add an alarm">
+          <IconButton
+            color="secondary"
+            aria-label="add an alarm"
+            sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+          >
             <EditIcon color={'info'} fontSize={'12px'} />
           </IconButton>
         }
@@ -139,7 +150,10 @@ const DeleteBtn = () => {
     <div style={{ cursor: 'pointer' }}>
       <FormControlLabel
         control={
-          <IconButton aria-label="add an alarm">
+          <IconButton
+            aria-label="add an alarm"
+            sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+          >
             <DeleteIcon color={'error'} />
           </IconButton>
         }
@@ -150,7 +164,10 @@ const DeleteBtn = () => {
 
 export default React.memo(function CustomersTable({ customers }) {
   const { state: authState } = useAuthContext()
-  const { authToken } = authState
+  const {
+    authToken,
+    merchantDetails: { id },
+  } = authState
 
   const [open, setOpen] = React.useState(false)
 
@@ -161,15 +178,17 @@ export default React.memo(function CustomersTable({ customers }) {
   const handleDelete = (i) => mutate(i)
 
   const { refetch: customersRefetch } = useCustomersByMerchant(authToken)
+  const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
 
   const { mutate } = useMutation((i) => deleteCustomer(authToken, i), {
     onSuccess: () => {
       customersRefetch()
+      stockRefetch()
     },
   })
 
   return (
-    <Box sx={{ height: '500px' }}>
+    <Box sx={{ height: 500 }}>
       <DataGrid
         components={{ Toolbar: GridToolbar }}
         // disableColumnFilter
@@ -177,17 +196,15 @@ export default React.memo(function CustomersTable({ customers }) {
         density="comfortable"
         filterMode="client"
         componentsProps={{
-          panel: {
-            sx: {
-              '& .MuiTypography-root': {
-                color: '#2e2e2e',
-                fontSize: 15,
-              },
-            },
-          },
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
+            sx: {
+              '& .MuiButton-root': {
+                color: '#4071bb',
+                fontSize: 12,
+              },
+            },
           },
         }}
         sx={{
@@ -204,11 +221,13 @@ export default React.memo(function CustomersTable({ customers }) {
           '& .MuiInputBase-root-MuiInput-root': {
             color: 'red',
           },
+          ...fontStyle,
         }}
         rows={customers}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}
+        rowHeight={42}
         disableVirtualization={true}
         onCellClick={(params) => {
           const { id } = params.row

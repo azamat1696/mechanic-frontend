@@ -1,4 +1,5 @@
 import React from 'react'
+
 // Components
 import Nav from '../components/Nav'
 import Head from 'next/head'
@@ -11,7 +12,6 @@ export default function Layout({ children }) {
       </Head>
       <Nav />
       {children}
-      {/* <Footer /> */}
     </div>
   )
 }

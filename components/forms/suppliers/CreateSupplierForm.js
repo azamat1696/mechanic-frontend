@@ -19,16 +19,19 @@ import {
 
 import { useMutation } from '@tanstack/react-query'
 
+const cursorStyle = {
+  '.MuiOutlinedInput-input': {
+    cursor: 'default',
+  },
+}
+
 export default function CreateSupplierForm({ handleClose }) {
   const [loading, setLoading] = React.useState(false)
   const [newSupplier, setNewSupplier] = React.useState({
     name: '',
   })
   const { state: authState, dispatch: authDispatch } = useAuthContext()
-  const {
-    authToken,
-    merchantDetails: { id },
-  } = authState
+  const { authToken } = authState
 
   const { refetch: suppliersRefetch, isStale: suppliersIsStale } =
     useSuppliersByMerchant(authToken)
@@ -38,9 +41,7 @@ export default function CreateSupplierForm({ handleClose }) {
     {
       onSuccess: () => {
         setLoading(!loading)
-        if (suppliersIsStale) {
-          suppliersRefetch()
-        }
+        suppliersRefetch()
       },
     }
   )
@@ -69,6 +70,13 @@ export default function CreateSupplierForm({ handleClose }) {
                   name: e.target.value,
                 })
               }
+              sx={cursorStyle}
+              inputProps={{
+                autocomplete: 'new-password',
+                form: {
+                  autocomplete: 'off',
+                },
+              }}
             />
           </Grid>
           <Grid item xs={12}>

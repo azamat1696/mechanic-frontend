@@ -27,10 +27,15 @@ import {
   useProductsByMerchantData,
   useStockByMerchantData,
 } from '../../hooks/useAsyncHooks'
-import useRenderCount from '../../hooks/useRenderCount'
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
+
+const fontStyle = {
+  fontFamily: "'Karla', sans-serif;",
+  fontWeight: 400,
+  fontSize: '0.9rem',
+}
 
 const style = {
   position: 'absolute',
@@ -48,7 +53,7 @@ const columns = [
   {
     field: 'id',
     headerName: 'ID',
-    width: 100,
+    width: 80,
     align: 'center',
     headerAlign: 'center',
     hide: false,
@@ -79,8 +84,8 @@ const columns = [
   },
   {
     field: 'product_code',
-    headerName: 'Product code',
-    width: 130,
+    headerName: 'Code',
+    width: 100,
     editable: false,
     sortable: false,
     filterable: true,
@@ -99,7 +104,7 @@ const columns = [
   },
   {
     field: 'supplierName',
-    headerName: 'Supplier Name',
+    headerName: 'Supplier',
     width: 130,
     editable: false,
     sortable: true,
@@ -114,7 +119,7 @@ const columns = [
   {
     field: 'costPrice',
     headerName: 'Cost',
-    width: 100,
+    width: 90,
     editable: false,
     sortable: true,
     filterable: true,
@@ -132,7 +137,7 @@ const columns = [
   {
     field: 'retailPrice',
     headerName: 'Retail',
-    width: 100,
+    width: 90,
     editable: false,
     sortable: true,
     filterable: true,
@@ -150,12 +155,24 @@ const columns = [
   {
     field: 'minimum',
     headerName: 'Min Qty',
-    width: 100,
+    width: 90,
     editable: false,
     sortable: false,
     filterable: true,
     align: 'center',
     headerAlign: 'center',
+  },
+
+  {
+    field: 'edit',
+    headerName: 'Edit',
+    editable: false,
+    sortable: false,
+    filterable: false,
+    renderCell: () => <EditBtn />,
+    align: 'right',
+    headerAlign: 'center',
+    width: 85,
   },
   {
     field: 'delete',
@@ -166,18 +183,7 @@ const columns = [
     renderCell: () => <DeleteBtn />,
     align: 'right',
     headerAlign: 'center',
-    width: 90,
-  },
-  {
-    field: 'edit',
-    headerName: 'Edit',
-    editable: false,
-    sortable: false,
-    filterable: false,
-    renderCell: () => <EditBtn />,
-    align: 'right',
-    headerAlign: 'center',
-    width: 90,
+    width: 85,
   },
 ]
 
@@ -186,7 +192,11 @@ const EditBtn = () => {
     <div style={{ cursor: 'pointer' }}>
       <FormControlLabel
         control={
-          <IconButton color="secondary" aria-label="add an alarm">
+          <IconButton
+            color="secondary"
+            aria-label="add an alarm"
+            sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+          >
             <EditIcon color={'info'} fontSize={'12px'} />
           </IconButton>
         }
@@ -200,7 +210,10 @@ const DeleteBtn = () => {
     <div style={{ cursor: 'pointer' }}>
       <FormControlLabel
         control={
-          <IconButton aria-label="add an alarm">
+          <IconButton
+            aria-label="add an alarm"
+            sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+          >
             <DeleteIcon color={'error'} />
           </IconButton>
         }
@@ -261,17 +274,15 @@ export default React.memo(function DataTable({ products, loading }) {
           LoadingOverlay: LinearProgress,
         }}
         componentsProps={{
-          panel: {
-            sx: {
-              '& .MuiTypography-root': {
-                color: '#2e2e2e',
-                fontSize: 15,
-              },
-            },
-          },
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
+            sx: {
+              '& .MuiButton-root': {
+                color: '#4071bb',
+                fontSize: 12,
+              },
+            },
           },
         }}
         sx={{
@@ -288,12 +299,14 @@ export default React.memo(function DataTable({ products, loading }) {
           '& .MuiInputBase-root-MuiInput-root': {
             color: 'red',
           },
+          ...fontStyle,
         }}
         rows={loading ? [] : products.products}
         columns={columns}
         pageSize={5}
         loading={loading}
         rowsPerPageOptions={[5]}
+        rowHeight={47.5}
         disableVirtualization={true}
         onCellClick={(params) => {
           const { id } = params

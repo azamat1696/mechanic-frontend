@@ -8,15 +8,49 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import DownloadIcon from '@mui/icons-material/Download'
+import EditIcon from '@mui/icons-material/Edit'
 
+import Backdrop from '@mui/material/Backdrop'
+import Modal from '@mui/material/Modal'
+import Fade from '@mui/material/Fade'
+
+import EditPurchaseForm from '../forms/purchases/EditPurchaseForm'
+
+// Hooks
 import useAuthContext from '../../hooks/useAuthContext'
 import { getPdf } from '../../hooks/usePurchaceOrderPdf'
+import {
+  deletePurchaseOrder,
+  usePurchaseOrder,
+} from '../../hooks/usePurchaseOrderHook'
+
+// React Query
+import { useMutation } from '@tanstack/react-query'
+
+const fontStyle = {
+  fontFamily: "'Karla', sans-serif;",
+  fontWeight: 400,
+  fontSize: '0.9rem',
+}
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  minHeight: 500,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 3,
+}
 
 const columns = [
   {
     field: 'id',
-    headerName: 'Order Num',
-    width: 150,
+    headerName: 'ID',
+    width: 80,
     hide: false,
     align: 'center',
     headerAlign: 'center',
@@ -81,46 +115,60 @@ const columns = [
     field: 'downloadPdf',
     headerName: 'Download',
     sortable: false,
-    width: 110,
+    width: 95,
     align: 'center',
     headerAlign: 'center',
     renderCell: (params) => <Download params={params} />,
   },
+  {
+    field: 'edit',
+    headerName: 'Edit',
+    editable: false,
+    sortable: false,
+    filterable: false,
+    renderCell: () => <EditBtn />,
+    align: 'right',
+    headerAlign: 'center',
+    width: 90,
+  },
+
+  {
+    field: 'delete',
+    headerName: 'Delete',
+    headerAlign: 'center',
+    align: 'right',
+    editable: false,
+    sortable: false,
+    filterable: false,
+    renderCell: () => <DeleteBtn />,
+    width: 90,
+  },
 ]
 
-const MatDel = ({ index }) => {
-  return (
-    <FormControlLabel
-      control={
-        <IconButton
-          aria-label="add an alarm"
-          // onClick={handleDelete}
-          data-testid={index}
-        >
-          <DeleteIcon color={'error'} />
-        </IconButton>
-      }
-    />
-  )
-}
-
-// const ViewBtn = ({ params }) => {
+// const DeleteBtn = ({ params }) => {
 //   return (
-//     <Button
-//       variant="outlined"
-//       size="small"
-//       sx={{
-//         borderTopLeftRadius: '20px',
-//         borderTopRightRadius: '20px',
-//         borderBottomLeftRadius: '20px',
-//         borderBottomRightRadius: '20px',
-//         margin: '0 0 0 20px',
-//       }}
-//     >
-//       View
+//     <Button variant="outlined" size="small" sx={{ borderRadius: '20px' }}>
+//       Delete
 //     </Button>
 //   )
 // }
+
+const DeleteBtn = () => {
+  return (
+    <div style={{ cursor: 'pointer' }}>
+      <FormControlLabel
+        control={
+          <IconButton
+            aria-label="add an alarm"
+            sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+          >
+            <DeleteIcon color={'error'} />
+          </IconButton>
+        }
+      />
+    </div>
+  )
+}
 
 const StatusChip = ({ params }) => {
   const { status } = params.row
@@ -129,6 +177,24 @@ const StatusChip = ({ params }) => {
   } else if (status === 'Delivered') {
     return <Chip label="Delivered" color="success" variant="outlined" />
   }
+}
+
+const EditBtn = () => {
+  return (
+    <div style={{ cursor: 'pointer' }}>
+      <FormControlLabel
+        control={
+          <IconButton
+            color="secondary"
+            aria-label="add an alarm"
+            disableRipple={true}
+          >
+            <EditIcon color={'info'} fontSize={'12px'} />
+          </IconButton>
+        }
+      />
+    </div>
+  )
 }
 
 const Download = ({ params }) => {
@@ -162,6 +228,7 @@ const Download = ({ params }) => {
       size="large"
       color="primary"
       onClick={() => handlePdfDownload('invoice', authToken, params.row.id)}
+      sx={{ '&:hover': { backgroundColor: 'transparent' } }}
     >
       <DownloadIcon fontSize="inherit" />
     </IconButton>
@@ -171,12 +238,46 @@ const Download = ({ params }) => {
 export default function PurchasesTable({
   purchaseOrdersData,
   handlePurchaseSelection,
-  setAcc,
 }) {
   const [pageSize, setPageSize] = React.useState(10)
 
+  const { state: authState, dispatch: authDispatch } = useAuthContext()
+  const {
+    authToken,
+    merchantDetails: { id },
+  } = authState
+
+  const [open, setOpen] = React.useState(false)
+
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
+  const [purchase, setPurchase] = React.useState(null)
+
+  const handleEdit = (i, params) => {
+    console.log('edit clicked', i)
+    handleOpen()
+    setPurchase(params.row)
+  }
+
+  const {
+    data,
+    status: purchaseStatus,
+    error: purchaseError,
+    isStale: purchaseIsStale,
+    refetch: purchaseRefetch,
+  } = usePurchaseOrder(authToken)
+
+  const { mutate } = useMutation((i) => deletePurchaseOrder(authToken, i), {
+    onSuccess: () => {
+      purchaseRefetch()
+    },
+  })
+
+  const handleDelete = (i) => mutate(i)
+
   return (
-    <Box sx={{ height: 600, width: '100%' }}>
+    <Box sx={{ height: 500 }}>
       <DataGrid
         rows={purchaseOrdersData.orders}
         columns={columns}
@@ -188,20 +289,15 @@ export default function PurchasesTable({
           Toolbar: GridToolbar,
         }}
         componentsProps={{
-          panel: {
-            sx: {
-              '& .MuiTypography-root': {
-                color: '#2e2e2e',
-                fontSize: 15,
-              },
-              '& .MuiDataGrid-filterForm': {
-                backgroundColor: 'red',
-              },
-            },
-          },
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
+            sx: {
+              '& .MuiButton-root': {
+                color: '#4071bb',
+                fontSize: 12,
+              },
+            },
           },
         }}
         sx={{
@@ -218,15 +314,45 @@ export default function PurchasesTable({
           '& .MuiInputBase-root-MuiInput-root': {
             color: 'red',
           },
+          ...fontStyle,
         }}
         rowsPerPageOptions={[10]}
+        rowHeight={40}
         disableSelectionOnClick
         experimentalFeatures={{ newEditingApi: true }}
         onCellClick={(params) => {
-          setAcc(false)
           handlePurchaseSelection(params)
+          const { id } = params
+          console.log('Params', params.row)
+          if (params.field === 'delete') {
+            handleDelete(id)
+          }
+          if (params.field === 'edit') {
+            handleEdit(id, params)
+          }
         }}
       />
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={style}>
+            <EditPurchaseForm
+              purchase={purchase}
+              open={open}
+              handleClose={handleClose}
+            />
+          </Box>
+        </Fade>
+      </Modal>
     </Box>
   )
 }
