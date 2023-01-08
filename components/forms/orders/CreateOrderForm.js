@@ -23,7 +23,7 @@ import {
 } from '../../../hooks/useOrdersHook'
 
 // React Query
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export default function CreateOrderForm({ handleClose }) {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
@@ -138,11 +138,17 @@ export default function CreateOrderForm({ handleClose }) {
   const { refetch: ordersRefetch } = useCustomerOrders(authToken)
   const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
 
+  const queryClient = useQueryClient()
+
   const { mutate } = useMutation(
     () => createCustomerOrder(authToken, rows, active.id),
     {
       onSuccess: () => {
         setLoading(!loading)
+        // queryClient.invalidateQueries([
+        //   `customerOrdersByMerchant`,
+        //   `stockByMerchant`,
+        // ])
         ordersRefetch()
         stockRefetch()
       },
