@@ -37,10 +37,9 @@ export async function fetchProductsByMerchant(token) {
     mode: 'cors',
     cache: 'default',
   }
-
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/list-products',
+      `http://localhost:8000/api/merchants/list-products`,
       myInit
     )
     const data = await res.json()
