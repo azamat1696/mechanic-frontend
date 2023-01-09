@@ -75,7 +75,7 @@ export default function Home() {
     }
   }, [isAuthenticated, router])
 
-  // console.log('environment', process.env.NODE_ENV)
+  console.log('environment', process.env)
   console.log('next environment', process.env.NEXT_PUBLIC_ENV)
   console.log('next NEXT_PUBLIC_BASE_URL', process.env.NEXT_PUBLIC_BASE_URL)
 
