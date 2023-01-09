@@ -194,7 +194,6 @@ const MatDel = ({ index }) => {
       control={
         <IconButton
           aria-label="add an alarm"
-          // onClick={handleDelete}
           data-testid={index}
           sx={{ '&:hover': { backgroundColor: 'transparent' } }}
         >
