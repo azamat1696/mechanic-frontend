@@ -15,7 +15,7 @@ export async function fetchSuppliersByMerchant(token) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/suppliers',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/suppliers`,
       myInit
     )
     return await res.json()
@@ -45,7 +45,7 @@ export async function fetchProductsBySupplier(token, newOrder) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/products-supplier',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/products-supplier`,
       myInit
     )
     return await res.json()
@@ -76,7 +76,7 @@ export async function createSupplierByMerchant(token, newSupplier) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/create-supplier',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/create-supplier`,
       myInit
     )
     return await res.json()
@@ -101,7 +101,7 @@ export async function deleteSupplier(token, supplierId) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/delete-supplier',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/delete-supplier`,
       myInit
     )
     return await res.json()
@@ -126,7 +126,7 @@ export async function updateSupplier(token, supplierToEdit) {
 
   try {
     const res = await fetch(
-      `http://localhost:8000/api/merchants/update-supplier`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/update-supplier`,
       myInit
     )
     return await res.json()

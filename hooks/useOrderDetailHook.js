@@ -15,7 +15,7 @@ export async function fetchOrderDetailByOrder(token, id) {
   }
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/order-detail',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/order-detail`,
       myInit
     )
     return await res.json()
@@ -50,7 +50,7 @@ export async function deleteOrderDetail(token, id) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/delete-order-detail',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/delete-order-detail`,
       myInit
     )
     return await res.json()
@@ -75,7 +75,7 @@ export async function updateOrderDetail(token, updateProducts) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/update-order-detail',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/update-order-detail`,
       myInit
     )
     return await res.json()

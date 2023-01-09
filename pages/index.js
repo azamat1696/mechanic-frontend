@@ -24,6 +24,7 @@ export default function Home() {
     email: '',
     password: '',
   })
+
   const router = useRouter()
 
   async function userLogin() {
@@ -39,7 +40,7 @@ export default function Home() {
 
     try {
       const res = await fetch(
-        'http://localhost:8000/api/auth/login/merchant',
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/merchant`,
         myInit
       )
 
@@ -73,6 +74,10 @@ export default function Home() {
       // router.push('/test')
     }
   }, [isAuthenticated, router])
+
+  console.log('environment', process.env.NODE_ENV)
+  console.log('next environment', process.env.NEXT_PUBLIC_ENV)
+  console.log('next NEXT_PUBLIC_BASE_URL', process.env.NEXT_PUBLIC_BASE_URL)
 
   return <MapBox />
 }

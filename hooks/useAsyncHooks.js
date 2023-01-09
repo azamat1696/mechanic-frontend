@@ -14,7 +14,10 @@ export async function fetchStockByMerchant(token, merchId) {
   }
 
   try {
-    const res = await fetch('http://localhost:8000/api/merchants/stock', myInit)
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/stock`,
+      myInit
+    )
     return await res.json()
   } catch (err) {
     console.log('err', err)
@@ -39,7 +42,7 @@ export async function fetchProductsByMerchant(token) {
   }
   try {
     const res = await fetch(
-      `http://localhost:8000/api/merchants/list-products`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/list-products`,
       myInit
     )
     const data = await res.json()
@@ -73,7 +76,7 @@ export async function createProduct(token, newProduct) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/create-product',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/create-product`,
       myInit
     )
 
@@ -86,7 +89,6 @@ export async function createProduct(token, newProduct) {
 }
 
 export async function deleteProduct(token, productId) {
-  console.log('deleteProduct function')
   const myInit = {
     method: 'POST',
     headers: {
@@ -100,7 +102,7 @@ export async function deleteProduct(token, productId) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/delete-single-product',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/delete-single-product`,
       myInit
     )
     const data = await res.json()
@@ -133,7 +135,7 @@ export async function updateProduct(token, productToEdit) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/update-product',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/update-product`,
       myInit
     )
     return await res.json()
@@ -155,7 +157,7 @@ export async function fetchCustomersByMerchant(token) {
   }
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/customers',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/customers`,
       myInit
     )
     const data = await res.json()
@@ -186,7 +188,7 @@ export async function createCustomer(token, newCustomer) {
       cache: 'default',
     }
     const res = await fetch(
-      'http://localhost:8000/api/merchants/create-customer',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/create-customer`,
       myInit
     )
     return await res.json()
@@ -209,7 +211,7 @@ export async function deleteCustomer(token, customerId) {
   }
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/delete-customer',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/delete-customer`,
       myInit
     )
     return await res.json()
@@ -232,7 +234,7 @@ export async function updateCustomer(token, customerToEdit) {
 
   try {
     const res = await fetch(
-      `http://localhost:8000/api/merchants/update-customer`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/update-customer`,
       myInit
     )
 

@@ -14,7 +14,7 @@ export async function getPdf(authToken, id) {
   }
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/purchase-order',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/purchase-order`,
       myInit
     )
     const myFile = await res.arrayBuffer()

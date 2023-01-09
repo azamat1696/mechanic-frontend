@@ -16,7 +16,7 @@ export async function createPurchaseOrder(token, purchaseOrder) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/create-purchase-order',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/create-purchase-order`,
       myInit
     )
     const data = await res.json()
@@ -41,7 +41,7 @@ export async function fetchOrdersByMerchant(token) {
   }
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/merchant-orders',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/merchant-orders`,
       myInit
     )
     return await res.json()
@@ -69,7 +69,7 @@ export async function deletePurchaseOrder(token, id) {
 
   try {
     const res = await fetch(
-      'http://localhost:8000/api/merchants/delete-purchase-order',
+      `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/delete-purchase-order`,
       myInit
     )
     return await res.json()

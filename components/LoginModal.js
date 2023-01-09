@@ -69,7 +69,8 @@ export default function BasicModal() {
     try {
       const res = await fetch(
         // `https://api.mechanic.neareasttechnology.net/auth/login/merchant`,
-        'http://localhost:8000/api/auth/login/merchant',
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/merchant`,
+        // 'http://localhost:8000/api/auth/login/merchant',
         myInit
       )
       const data = await res.json()
