@@ -47,35 +47,36 @@ const style = {
   boxShadow: 24,
   p: 3,
 }
-import EditIcon from '@mui/icons-material/Edit'
 
-import Backdrop from '@mui/material/Backdrop'
-import Modal from '@mui/material/Modal'
-import Fade from '@mui/material/Fade'
+// import EditIcon from '@mui/icons-material/Edit'
+
+// import Backdrop from '@mui/material/Backdrop'
+// import Modal from '@mui/material/Modal'
+// import Fade from '@mui/material/Fade'
 
 // Hooks
-import {
-  deleteCustomerOrder,
-  useCustomerOrders,
-} from '../../hooks/useOrdersHook'
-import { useStockByMerchantData } from '../../hooks/useAsyncHooks'
-import useAuthContext from '../../hooks/useAuthContext'
+// import {
+//   deleteCustomerOrder,
+//   useCustomerOrders,
+// } from '../../hooks/useOrdersHook'
+// import { useStockByMerchantData } from '../../hooks/useAsyncHooks'
+// import useAuthContext from '../../hooks/useAuthContext'
 
 // React Query
-import { useMutation } from '@tanstack/react-query'
+// import { useMutation } from '@tanstack/react-query'
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  minHeight: 500,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 3,
-}
+// const style = {
+//   position: 'absolute',
+//   top: '50%',
+//   left: '50%',
+//   transform: 'translate(-50%, -50%)',
+//   width: 800,
+//   minHeight: 500,
+//   bgcolor: 'background.paper',
+//   border: '2px solid #000',
+//   boxShadow: 24,
+//   p: 3,
+// }
 
 const columns = [
   {
