@@ -65,7 +65,7 @@ export default function Home() {
 
   React.useEffect(() => {
     console.log('login', login)
-    console.log('authState', authState)
+    console.log('authStatee', authState)
   }, [login, authState])
 
   React.useEffect(() => {
