@@ -17,7 +17,7 @@ export default function MapBox() {
         onMove={(evt) => setViewState(evt.viewState)}
         style={{ width: 1600, height: 800 }}
         mapStyle="mapbox://styles/hal87/clcdex4e0002u14p28rovt790"
-        mapboxAccessToken={process.env.mapbox_key}
+        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_KEY}
       />
     </Card>
   )
