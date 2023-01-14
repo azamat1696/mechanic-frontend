@@ -13,7 +13,7 @@ import useRenderCount from '../../../hooks/useRenderCount'
 import useAuthContext from '../../../hooks/useAuthContext'
 import {
   updateSupplier,
-  useSuppliersByMerchant,
+  // useSuppliersByMerchant,
 } from '../../../hooks/useSuppliersHook'
 
 // React Query
@@ -32,7 +32,7 @@ export default React.memo(function EditSupplierForm({
 
   useRenderCount('EditSupplierForm')
 
-  const { refetch } = useSuppliersByMerchant(authToken)
+  // const { refetch } = useSuppliersByMerchant(authToken)
 
   const { mutate, status, error } = useMutation(
     () => updateSupplier(authToken, supplierToEdit),

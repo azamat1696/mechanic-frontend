@@ -27,6 +27,8 @@ import { useMutation } from '@tanstack/react-query'
 // Components
 import EditSupplierForm from '../forms/suppliers/EditSupplierForm'
 
+import { queryClient } from '../../pages/_app'
+
 const fontStyle = {
   fontFamily: "'Karla', sans-serif;",
   fontWeight: 400,
@@ -212,6 +214,14 @@ export default function SuppliersTable({ suppliers }) {
     setOpen(true)
   }
 
+  const { mutate } = useMutation((i) => deleteSupplier(authToken, i), {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`suppliersByMerchant`] })
+    },
+  })
+
+  const handleDelete = (i) => mutate(i)
+
   const handleClose = () => {
     setOpen(false)
     setIdx(null)
@@ -271,7 +281,13 @@ export default function SuppliersTable({ suppliers }) {
         rowsPerPageOptions={[5]}
         rowHeight={42}
         experimentalFeatures={{ newEditingApi: true }}
-        onCellClick={(params) => params.field === 'edit' && handleOpen(params)}
+        onCellClick={(params) => {
+          if (params.field === 'edit') {
+            handleOpen(params)
+          } else if (params.field === 'delete') {
+            handleDelete(params.id)
+          }
+        }}
       />
       <Modal
         aria-labelledby="transition-modal-title"
