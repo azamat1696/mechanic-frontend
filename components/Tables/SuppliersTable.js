@@ -183,6 +183,12 @@ export default function SuppliersTable({ suppliers }) {
     }
   }, [suppliersData])
 
+  React.useEffect(() => {
+    if (suppliersIsStale) {
+      suppliersRefetch()
+    }
+  }, [suppliersIsStale])
+
   // React.useEffect(() => {
   //   if (authToken) {
   //     suppliersRefetch()
