@@ -17,7 +17,9 @@ import {
 } from '../../../hooks/useSuppliersHook'
 
 // React Query
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, QueryClient } from '@tanstack/react-query'
+
+import { queryClient } from '../../../pages/_app'
 
 export default React.memo(function EditSupplierForm({
   idx,
@@ -30,16 +32,13 @@ export default React.memo(function EditSupplierForm({
 
   useRenderCount('EditSupplierForm')
 
-  const { refetch: suppliersRefetch /*, isStale: suppliersIsStale*/ } =
-    useSuppliersByMerchant(authToken, 'suppliersByMerchant')
+  const { refetch } = useSuppliersByMerchant(authToken)
 
   const { mutate, status, error } = useMutation(
     () => updateSupplier(authToken, supplierToEdit),
     {
       onSuccess: () => {
-        suppliersRefetch()
-        // if (suppliersIsStale) {
-        // }
+        queryClient.invalidateQueries({ queryKey: [`suppliersByMerchant`] })
       },
     }
   )
@@ -69,16 +68,6 @@ export default React.memo(function EditSupplierForm({
             <Typography variant="h5">Edit Supplier</Typography>
           </Grid>
 
-          {/* <Grid item xs={12}>
-            <TextField
-              id="outlined-basic"
-              variant="outlined"
-              autoComplete="off"
-              size="small"
-              value={supplierToEdit.id}
-              hidden={true}
-            />
-          </Grid> */}
           <Grid item xs={12}>
             <TextField
               id="outlined-basic"
