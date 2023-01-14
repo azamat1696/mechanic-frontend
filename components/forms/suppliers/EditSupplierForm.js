@@ -30,16 +30,16 @@ export default React.memo(function EditSupplierForm({
 
   useRenderCount('EditSupplierForm')
 
-  const { refetch: suppliersRefetch, isStale: suppliersIsStale } =
+  const { refetch: suppliersRefetch /*, isStale: suppliersIsStale*/ } =
     useSuppliersByMerchant(authToken, 'suppliersByMerchant')
 
   const { mutate, status, error } = useMutation(
     () => updateSupplier(authToken, supplierToEdit),
     {
       onSuccess: () => {
-        if (suppliersIsStale) {
-          suppliersRefetch()
-        }
+        suppliersRefetch()
+        // if (suppliersIsStale) {
+        // }
       },
     }
   )
