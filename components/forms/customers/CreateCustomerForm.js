@@ -20,7 +20,8 @@ import {
   useCustomersByMerchant,
 } from '../../../hooks/useAsyncHooks'
 
-import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../../pages/_app'
 
 const labelStyles = {
   display: 'block',
@@ -52,29 +53,12 @@ export default function CreateCustomerForm({ handleClose }) {
   const { state: authState, dispatch } = useAuthContext()
   const { authToken } = authState
 
-  const {
-    data,
-    isStale: customersIsStale,
-    refetch: customersRefetch,
-  } = useCustomersByMerchant(authToken, 'customersByMerchant')
-
-  const queryClient = useQueryClient()
-
   const { mutate } = useMutation(() => createCustomer(authToken, customer), {
     onSuccess: () => {
       setLoading(!loading)
-      // customersRefetch()
       queryClient.invalidateQueries(['customersByMerchant'])
     },
   })
-
-  React.useEffect(() => {
-    console.log('data', data)
-  }, [data])
-
-  React.useEffect(() => {
-    console.log('customer', customer)
-  }, [customer])
 
   return (
     <form>

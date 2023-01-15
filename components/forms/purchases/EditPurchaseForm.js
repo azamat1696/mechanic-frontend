@@ -28,6 +28,7 @@ import {
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../../pages/_app'
 
 export default function EditPurchaseForm({ purchase, open, handleClose }) {
   // Hooks
@@ -52,7 +53,13 @@ export default function EditPurchaseForm({ purchase, open, handleClose }) {
     () => updatePurchaseOrderDetail(authToken, updateProducts),
     {
       onSuccess: () => {
-        console.log('success!')
+        queryClient.invalidateQueries({ queryKey: [`ordersByMerchant`] })
+        queryClient.invalidateQueries({
+          queryKey: [`updatePurchaseOrderDetail`],
+        })
+        queryClient.invalidateQueries({
+          queryKey: [`stockByMerchant`],
+        })
         // refetchCustomerOrders()
         // setLoading(!loading)
       },

@@ -28,6 +28,7 @@ import { useCustomerOrders } from '../../../hooks/useOrdersHook'
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../../pages/_app'
 
 const orderStatus = ['Waiting', 'In Progress', 'Complete']
 
@@ -37,8 +38,8 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
 
   // Hooks
   const { data: productsData } = useProductsByMerchantData(authToken)
-  const { data: customerOrdersData, refetch: refetchCustomerOrders } =
-    useCustomerOrders(authToken)
+  // const { data: customerOrdersData, refetch: refetchCustomerOrders } =
+  //   useCustomerOrders(authToken)
   const { data: orderDetailData, refetch: refetchOrderDetailData } =
     useOrderDetailsData(authToken, order.id)
 
@@ -61,8 +62,9 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
     (id) => deleteOrderDetail(authToken, id),
     {
       onSuccess: () => {
-        console.log('delete success!')
-        refetchCustomerOrders()
+        queryClient.invalidateQueries({
+          queryKey: [`customerOrdersByMerchant`],
+        })
       },
     }
   )
@@ -71,8 +73,12 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
     () => updateOrderDetail(authToken, updateProducts),
     {
       onSuccess: () => {
-        console.log('success!')
-        refetchCustomerOrders()
+        queryClient.invalidateQueries({
+          queryKey: [`customerOrdersByMerchant`],
+        })
+        queryClient.invalidateQueries({
+          queryKey: [`orderDetailByOrder`],
+        })
         setLoading(!loading)
       },
     }

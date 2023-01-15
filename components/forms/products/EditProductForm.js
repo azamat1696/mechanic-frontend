@@ -22,6 +22,7 @@ import { useSuppliersByMerchant } from '../../../hooks/useSuppliersHook'
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../../pages/_app'
 
 const labelStyles = {
   display: 'block',
@@ -40,13 +41,8 @@ const cursorStyle = {
 export default function EditProductForm({ product, setProduct, handleClose }) {
   const [loading, setLoading] = React.useState(false)
   const {
-    state: { authToken, merchantDetails },
+    state: { authToken },
   } = useAuthContext()
-
-  const { refetch: productsRefetch, isStale: productsIsStale } =
-    useProductsByMerchantData(authToken, 'productsByMerchant')
-  const { refetch: stockRefetch, isStale: stockIsStale } =
-    useStockByMerchantData(authToken, merchantDetails.id, 'stockByMerchant')
 
   const { data } = useSuppliersByMerchant(authToken)
   const [suppliersData, setsuppliersData] = React.useState([])
@@ -55,17 +51,11 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
     () => updateProduct(authToken, product),
     {
       onSuccess: () => {
-        productsRefetch()
-        stockRefetch()
+        queryClient.invalidateQueries({ queryKey: [`productsByMerchant`] })
+        queryClient.invalidateQueries({ queryKey: [`stockByMerchant`] })
       },
     }
   )
-
-  React.useEffect(() => {
-    if (productsIsStale) {
-      productsRefetch()
-    }
-  }, [productsIsStale])
 
   React.useEffect(() => {
     if (status === 'success') {

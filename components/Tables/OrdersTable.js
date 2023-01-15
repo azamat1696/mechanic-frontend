@@ -29,6 +29,8 @@ import { getPdf } from '../../hooks/useInvoicePdf'
 // React Query
 import { useMutation } from '@tanstack/react-query'
 
+import { queryClient } from '../../pages/_app'
+
 const fontStyle = {
   fontFamily: "'Karla', sans-serif;",
   fontWeight: 400,
@@ -47,36 +49,6 @@ const style = {
   boxShadow: 24,
   p: 3,
 }
-
-// import EditIcon from '@mui/icons-material/Edit'
-
-// import Backdrop from '@mui/material/Backdrop'
-// import Modal from '@mui/material/Modal'
-// import Fade from '@mui/material/Fade'
-
-// Hooks
-// import {
-//   deleteCustomerOrder,
-//   useCustomerOrders,
-// } from '../../hooks/useOrdersHook'
-// import { useStockByMerchantData } from '../../hooks/useAsyncHooks'
-// import useAuthContext from '../../hooks/useAuthContext'
-
-// React Query
-// import { useMutation } from '@tanstack/react-query'
-
-// const style = {
-//   position: 'absolute',
-//   top: '50%',
-//   left: '50%',
-//   transform: 'translate(-50%, -50%)',
-//   width: 800,
-//   minHeight: 500,
-//   bgcolor: 'background.paper',
-//   border: '2px solid #000',
-//   boxShadow: 24,
-//   p: 3,
-// }
 
 const columns = [
   {
@@ -281,10 +253,7 @@ const Download = ({ params }) => {
 
 export default React.memo(function OrdersTable({ ordersData }) {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
-  const {
-    authToken,
-    merchantDetails: { id },
-  } = authState
+  const { authToken, merchantDetails } = authState
 
   const [open, setOpen] = React.useState(false)
 
@@ -293,13 +262,14 @@ export default React.memo(function OrdersTable({ ordersData }) {
 
   const [order, setOrder] = React.useState(null)
 
-  const { refetch: ordersRefetch } = useCustomerOrders(authToken)
-  const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
-
   const { mutate } = useMutation((i) => deleteCustomerOrder(authToken, i), {
     onSuccess: () => {
-      ordersRefetch()
-      stockRefetch()
+      queryClient.invalidateQueries({
+        queryKey: [`customerOrdersByMerchant`],
+      })
+      queryClient.invalidateQueries({
+        queryKey: [`stockByMerchant`],
+      })
     },
   })
 
@@ -310,16 +280,6 @@ export default React.memo(function OrdersTable({ ordersData }) {
     handleOpen()
     setOrder(params.row)
   }
-
-  React.useEffect(() => {
-    if (authToken) {
-      ordersRefetch()
-    }
-  }, [authToken])
-
-  React.useEffect(() => {
-    console.log('ordersData', ordersData)
-  }, [ordersData])
 
   return (
     <Box sx={{ height: 500 }}>

@@ -26,6 +26,7 @@ import {
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../pages/_app'
 
 const fontStyle = {
   fontFamily: "'Karla', sans-serif;",
@@ -242,10 +243,7 @@ export default function PurchasesTable({
   const [pageSize, setPageSize] = React.useState(10)
 
   const { state: authState, dispatch: authDispatch } = useAuthContext()
-  const {
-    authToken,
-    merchantDetails: { id },
-  } = authState
+  const { authToken } = authState
 
   const [open, setOpen] = React.useState(false)
 
@@ -260,17 +258,10 @@ export default function PurchasesTable({
     setPurchase(params.row)
   }
 
-  const {
-    data,
-    status: purchaseStatus,
-    error: purchaseError,
-    isStale: purchaseIsStale,
-    refetch: purchaseRefetch,
-  } = usePurchaseOrder(authToken)
-
   const { mutate } = useMutation((i) => deletePurchaseOrder(authToken, i), {
     onSuccess: () => {
-      purchaseRefetch()
+      queryClient.invalidateQueries({ queryKey: [`ordersByMerchant`] })
+      queryClient.invalidateQueries({ queryKey: [`stockByMerchant`] })
     },
   })
 

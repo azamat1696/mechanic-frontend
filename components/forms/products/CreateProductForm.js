@@ -25,6 +25,7 @@ import {
 import { useSuppliersByMerchant } from '../../../hooks/useSuppliersHook'
 
 import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../../pages/_app'
 
 const labelStyles = {
   display: 'block',
@@ -56,13 +57,7 @@ export default function CreateProductForm({ handleClose }) {
   })
 
   const { state: authState, dispatch: authDispatch } = useAuthContext()
-  const {
-    authToken,
-    merchantDetails: { id },
-  } = authState
-
-  const { refetch: productsRefetch } = useProductsByMerchantData(authToken)
-  const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
+  const { authToken, merchantDetails } = authState
 
   const { data } = useSuppliersByMerchant(authToken)
 
@@ -71,8 +66,8 @@ export default function CreateProductForm({ handleClose }) {
   const { mutate } = useMutation(() => createProduct(authToken, newProduct), {
     onSuccess: () => {
       setLoading(!loading)
-      productsRefetch()
-      stockRefetch()
+      queryClient.invalidateQueries({ queryKey: [`productsByMerchant`] })
+      queryClient.invalidateQueries({ queryKey: [`stockByMerchant`] })
     },
   })
 

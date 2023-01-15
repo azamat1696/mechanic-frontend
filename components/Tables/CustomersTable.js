@@ -19,14 +19,11 @@ import EditCustomerForm from '../forms/customers/EditCustomerForm'
 import useAuthContext from '../../hooks/useAuthContext'
 
 // Hooks
-import {
-  deleteCustomer,
-  useCustomersByMerchant,
-} from '../../hooks/useAsyncHooks'
-import useRenderCount from '../../hooks/useRenderCount'
-import { useStockByMerchantData } from '../../hooks/useAsyncHooks'
+import { deleteCustomer } from '../../hooks/useAsyncHooks'
+
 // React Query
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../pages/_app'
 
 const fontStyle = {
   fontFamily: "'Karla', sans-serif;",
@@ -164,10 +161,7 @@ const DeleteBtn = () => {
 
 export default React.memo(function CustomersTable({ customers }) {
   const { state: authState } = useAuthContext()
-  const {
-    authToken,
-    merchantDetails: { id },
-  } = authState
+  const { authToken } = authState
 
   const [open, setOpen] = React.useState(false)
 
@@ -177,13 +171,10 @@ export default React.memo(function CustomersTable({ customers }) {
   const handleClose = () => setOpen(false)
   const handleDelete = (i) => mutate(i)
 
-  const { refetch: customersRefetch } = useCustomersByMerchant(authToken)
-  const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
-
   const { mutate } = useMutation((i) => deleteCustomer(authToken, i), {
     onSuccess: () => {
-      customersRefetch()
-      stockRefetch()
+      queryClient.invalidateQueries({ queryKey: [`customersByMerchant`] })
+      queryClient.invalidateQueries({ queryKey: [`stockByMerchant`] })
     },
   })
 

@@ -11,13 +11,11 @@ import SaveIcon from '@mui/icons-material/Save'
 
 // Hooks
 import useAuthContext from '../../../hooks/useAuthContext'
-import {
-  updateCustomer,
-  useCustomersByMerchant,
-} from '../../../hooks/useAsyncHooks'
+import { updateCustomer } from '../../../hooks/useAsyncHooks'
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../../pages/_app'
 
 const listStyleFirst = {
   margin: '5px 0 0 20px',
@@ -79,12 +77,12 @@ export default React.memo(function EditCustomerForm({
 
   const [validate, setValidate] = React.useState(initialValidationState)
 
-  const { refetch: customersRefetch } = useCustomersByMerchant(authToken)
-
   const { mutate, status, error } = useMutation(
     () => updateCustomer(authToken, customer),
     {
-      onSuccess: () => customersRefetch(),
+      onSuccess: () => {
+        queryClient.invalidateQueries(['customersByMerchant'])
+      },
       onError: (error) => {
         if (error.body.message) {
           let firstNameErrors = []

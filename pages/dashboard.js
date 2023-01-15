@@ -127,7 +127,7 @@ export default React.memo(function Dashboard() {
         return <StockTable stock={stockData} stockLoading={stockLoading} />
       }
     } else if (comp === 'Orders') {
-      return <OrdersTable ordersData={ordersData} authToken={authToken} />
+      return <OrdersTable ordersData={ordersData} />
     } else if (comp === 'Suppliers') {
       return <SuppliersTable suppliers={suppliersData} />
     } else if (comp === 'Purchases') {

@@ -21,13 +21,11 @@ import { useStockByMerchantData } from '../../../hooks/useAsyncHooks'
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../../pages/_app'
 
 export default function PurchaseForm({ handleClose, setO: setOpen }) {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
-  const {
-    authToken,
-    merchantDetails: { id },
-  } = authState
+  const { authToken } = authState
 
   // STATE
   const [rows, setRows] = React.useState({
@@ -43,26 +41,7 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
   // STATE
 
   // REACT QUERY
-  const {
-    data,
-    refetch: suppliersRefetch,
-    isStale: suppliersIsStale,
-  } = useSuppliersByMerchant(authToken)
-
-  const {
-    data: poData,
-    isStale: poIsStale,
-    refetch,
-  } = usePurchaseOrder(authToken)
-
-  const {
-    // data: ordersData,
-    // status: ordersStatus,
-    // error: ordersError,
-    // isStale: ordersIsStale,
-    refetch: stockRefetch,
-  } = useStockByMerchantData(authToken, id)
-  // REACT QUERY
+  const { data } = useSuppliersByMerchant(authToken)
 
   function addRow() {
     setRows({
@@ -156,9 +135,9 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
   const { mutate } = useMutation(() => createPurchaseOrder(authToken, rows), {
     onSuccess: () => {
       setLoading(!loading)
+      queryClient.invalidateQueries({ queryKey: [`ordersByMerchant`] })
+      queryClient.invalidateQueries({ queryKey: [`stockByMerchant`] })
       setOpen(true)
-      refetch()
-      stockRefetch()
     },
   })
 
@@ -185,7 +164,11 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
   }, [data])
 
   React.useEffect(() => {
-    suppliersRefetch()
+    queryClient.refetchQueries({
+      queryKey: [`suppliersByMerchant`],
+      type: 'active',
+      exact: true,
+    })
   }, [])
 
   // React.useEffect(() => {

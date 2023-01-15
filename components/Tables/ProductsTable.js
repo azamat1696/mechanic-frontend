@@ -30,6 +30,7 @@ import {
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../pages/_app'
 
 const fontStyle = {
   fontFamily: "'Karla', sans-serif;",
@@ -240,10 +241,7 @@ const Img = ({ params }) => {
 
 export default React.memo(function DataTable({ products, loading }) {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
-  const {
-    authToken,
-    merchantDetails: { id },
-  } = authState
+  const { authToken, merchantDetails } = authState
 
   const [open, setOpen] = React.useState(false)
   const [product, setProduct] = React.useState({})
@@ -252,13 +250,10 @@ export default React.memo(function DataTable({ products, loading }) {
   const handleClose = () => setOpen(false)
   const handleDelete = (i) => mutate(i)
 
-  const { refetch: productsRefetch } = useProductsByMerchantData(authToken)
-  const { refetch: stockRefetch } = useStockByMerchantData(authToken, id)
-
   const { mutate } = useMutation((i) => deleteProduct(authToken, i), {
     onSuccess: () => {
-      productsRefetch()
-      stockRefetch()
+      queryClient.invalidateQueries({ queryKey: [`productsByMerchant`] })
+      queryClient.invalidateQueries({ queryKey: [`stockByMerchant`] })
     },
   })
 
