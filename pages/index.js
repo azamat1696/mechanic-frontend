@@ -79,5 +79,5 @@ export default function Home() {
   console.log('next environment', process.env.NEXT_PUBLIC_ENV)
   console.log('next NEXT_PUBLIC_BASE_URL', process.env.NEXT_PUBLIC_BASE_URL)
 
-  return <MapBox />
+  return <>{/* <MapBox /> */}</>
 }
