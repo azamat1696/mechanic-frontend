@@ -31,11 +31,10 @@ import { useMutation } from '@tanstack/react-query'
 
 import { queryClient } from '../../pages/_app'
 
-//
 import pdfmake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 
-// pdfMake.vfs = pdfFonts.pdfMake.vfs
+pdfMake.vfs = pdfFonts.pdfMake.vfs
 
 const fontStyle = {
   fontFamily: "'Karla', sans-serif;",
@@ -392,7 +391,7 @@ function DownloadTwo({ params }) {
   const { createPdf } = pdfmake
 
   function dwnldPdf() {
-    createPdf(docDef).download()
+    return pdfMake.createPdf(docDef).open()
   }
 
   React.useEffect(() => {
