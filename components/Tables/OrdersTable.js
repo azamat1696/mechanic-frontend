@@ -388,10 +388,8 @@ function DownloadTwo({ params }) {
     },
   }
 
-  const { createPdf } = pdfmake
-
   function dwnldPdf() {
-    return pdfMake.createPdf(docDef).open()
+    return pdfMake.createPdf(docDef).download()
   }
 
   React.useEffect(() => {
