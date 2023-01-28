@@ -8,7 +8,7 @@ const nextConfig = {
     mapbox_key:
       'pk.eyJ1IjoiaGFsODciLCJhIjoiY2xjZGVyMDMwNnhtNTN3a2VlZWNrZG9jbyJ9.mos3-KYGU2Ibk88_STmJtw',
   },
-  swcMinify: true,
+  swcMinify: false,
 }
 
 module.exports = nextConfig

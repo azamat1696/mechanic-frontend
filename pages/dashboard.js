@@ -116,7 +116,7 @@ export default React.memo(function Dashboard() {
       if (productsStatus === 'loading') {
         return <Skeleton variant="rectangular" width="100%" height="100%" />
       } else if (productsStatus === 'success') {
-        return <ProductsTable products={productsData} loading={loading} />
+        // return <ProductsTable products={productsData} loading={loading} />
       }
     } else if (comp === 'Stock') {
       if (stockStatus === 'loading') {
@@ -129,7 +129,7 @@ export default React.memo(function Dashboard() {
     } else if (comp === 'Orders') {
       return <OrdersTable ordersData={ordersData} />
     } else if (comp === 'Suppliers') {
-      return <SuppliersTable suppliers={suppliersData} />
+      // return <SuppliersTable suppliers={suppliersData} />
     } else if (comp === 'Purchases') {
       return (
         <PurchasesTable
@@ -142,7 +142,7 @@ export default React.memo(function Dashboard() {
       if (customersStatus === 'loading') {
         return 'Loading...'
       } else {
-        return <CustomersTable customers={customersData} />
+        // return <CustomersTable customers={customersData} />
       }
     }
   }
