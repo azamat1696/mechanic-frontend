@@ -245,7 +245,7 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
               autoComplete="off"
               size="small"
               disabled={true}
-              value={product.image.name}
+              value={product.image}
             />
             <IconButton
               color="primary"
@@ -258,6 +258,7 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
                 type="file"
                 name="image"
                 onChange={(e) => {
+                  console.log('e', e.target.files[0])
                   e.preventDefault()
                   setProduct({
                     ...product,

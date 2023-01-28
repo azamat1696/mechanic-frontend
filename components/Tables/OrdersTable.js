@@ -330,7 +330,7 @@ function DownloadTwo({ params }) {
   }
 
   const isObjectEmpty = (objectName) => Object.keys(objectName).length === 0
-  const formatDate = (date) => new Date(date).toLocaleDateString()
+  // const formatDate = (date) => new Date(date).toLocaleDateString()
 
   const totalValue = (arr) => {
     const values = arr.map((a) => a.Total)
@@ -356,7 +356,7 @@ function DownloadTwo({ params }) {
         ],
       },
       {
-        text: `Date: ${isObjectEmpty(order) ? 1 : formatDate(order.createdAt)}`,
+        text: `Date: ${isObjectEmpty(order) ? 1 : order.createdAt}`,
         margin: [0, 2, 10, 20],
       },
       { table: table(orderDetail, columns), style: 'table' },
@@ -389,7 +389,7 @@ function DownloadTwo({ params }) {
     },
   }
 
-  const dwnldPdf = () => pdfMake.createPdf(docDef).open() //.download()
+  const dwnldPdf = () => pdfMake.createPdf(docDef).open()
 
   React.useEffect(() => {
     console.log('orderDetail', orderDetail)
