@@ -119,7 +119,7 @@ const columns = [
     width: 95,
     align: 'center',
     headerAlign: 'center',
-    renderCell: (params) => <Download params={params} />,
+    renderCell: (params) => <DownloadTwo params={params} />,
   },
   {
     field: 'edit',
@@ -229,6 +229,162 @@ const Download = ({ params }) => {
       size="large"
       color="primary"
       onClick={() => handlePdfDownload('invoice', authToken, params.row.id)}
+      sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+    >
+      <DownloadIcon fontSize="inherit" />
+    </IconButton>
+  )
+}
+
+function DownloadTwo({ params }) {
+  const { state: authState } = useAuthContext()
+  const { authToken } = authState
+
+  const [order, setOrder] = React.useState({})
+  const [orderDetail, setOrderDetail] = React.useState([])
+
+  const columns = ['Name', 'Quantity', 'Price', 'Total']
+
+  async function fetchOrderDetail(authToken, id) {
+    const myInit = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      mode: 'cors',
+      cache: 'default',
+      body: JSON.stringify({ orderId: id }),
+    }
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/merchants/purchase-order`,
+        myInit
+      )
+      const data = await res.json()
+      console.log('data', data)
+      formatData(data.items)
+      setOrder(data.order)
+      return data
+    } catch (err) {
+      return err
+    }
+  }
+
+  function formatData(data) {
+    const arrData = data.map((d) => {
+      const product = {
+        Name: d.product.name,
+        Quantity: d.quantity,
+        Price: d.price,
+        Total: d.quantity * d.price,
+      }
+      return product
+    })
+    setOrderDetail(arrData)
+  }
+
+  function buildTableBody(data, columns) {
+    const body = []
+    body.push(columns)
+
+    data.forEach(function (row) {
+      const dataRow = []
+      columns.forEach(function (column) {
+        dataRow.push(row[column].toString())
+      })
+      body.push(dataRow)
+    })
+
+    return body
+  }
+
+  function table(data, columns) {
+    return {
+      headerRows: 1,
+      widths: [125, 65, 65, 65],
+      body: buildTableBody(data, columns),
+    }
+  }
+
+  const isObjectEmpty = (objectName) => Object.keys(objectName).length === 0
+  const formatDate = (date) => new Date(date).toLocaleDateString()
+  const totalValue = (arr) => {
+    const values = arr.map((a) => a.Total)
+    return values.length > 0 ? values.reduce((acc, curr) => acc + curr) : 0
+  }
+
+  let docDef = {
+    content: [
+      {
+        columns: [
+          {
+            width: '65%',
+            text: `Purchase Order - ${isObjectEmpty(order) ? 1 : order.id}`,
+            style: 'header',
+            margin: [0, 2, 10, 20],
+          },
+          {
+            width: '35%',
+            stack: ['Address A', 'Address B', 'Address C'],
+            fontSize: 12,
+            style: 'align',
+          },
+        ],
+      },
+      {
+        text: `Date: ${isObjectEmpty(order) ? 1 : formatDate(order.createdAt)}`,
+        margin: [0, 2, 10, 20],
+      },
+      { table: table(orderDetail, columns), style: 'table' },
+      {
+        table: {
+          headerRows: 1,
+          widths: [125, 65, 65, 65],
+          body: [['Total', '', '', `${totalValue(orderDetail)}`]],
+        },
+        style: 'tableTwo',
+      },
+    ],
+    // Styles
+    styles: {
+      header: {
+        fontSize: 35,
+        bold: true,
+      },
+      table: {
+        fontSize: 12,
+      },
+      tableTwo: {
+        fontSize: 12,
+        margin: [0, 7.5, 0, 0],
+        bold: true,
+      },
+      align: {
+        alignment: 'right',
+      },
+    },
+  }
+
+  const dwnldPdf = () => pdfMake.createPdf(docDef).open() //.download()
+
+  React.useEffect(() => {
+    console.log('orderDetail', orderDetail)
+    if (orderDetail.length !== 0) {
+      dwnldPdf()
+    }
+  }, [orderDetail])
+
+  return (
+    <IconButton
+      aria-label="delete"
+      size="large"
+      color="primary"
+      onClick={() => {
+        setOrderDetail([])
+        fetchOrderDetail(authToken, params.row.id)
+      }}
       sx={{ '&:hover': { backgroundColor: 'transparent' } }}
     >
       <DownloadIcon fontSize="inherit" />

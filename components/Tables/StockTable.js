@@ -124,7 +124,7 @@ const columns = [
     hide: false,
     editable: false,
     sortable: false,
-    filterable: false,
+    filterable: true,
     width: 100,
     align: 'center',
     headerAlign: 'center',
