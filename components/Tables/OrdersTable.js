@@ -28,12 +28,11 @@ import { getPdf } from '../../hooks/useInvoicePdf'
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
-
 import { queryClient } from '../../pages/_app'
 
+// Pdf Make
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
-
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
 const fontStyle = {
