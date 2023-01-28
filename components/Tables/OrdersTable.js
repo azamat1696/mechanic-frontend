@@ -31,7 +31,7 @@ import { useMutation } from '@tanstack/react-query'
 
 import { queryClient } from '../../pages/_app'
 
-import pdfmake from 'pdfmake/build/pdfmake'
+import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
@@ -389,7 +389,7 @@ function DownloadTwo({ params }) {
   }
 
   function dwnldPdf() {
-    return pdfMake.createPdf(docDef).download()
+    return pdfMake.createPdf(docDef, null).download(`Invoice - ${order.id}`)
   }
 
   React.useEffect(() => {

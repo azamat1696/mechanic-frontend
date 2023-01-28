@@ -25,7 +25,7 @@ import Switch from '../components/Switch'
 import useAuthContext from '../hooks/useAuthContext'
 // import useThemeContext from '../hooks/useThemeContext'
 
-const pages = ['']
+const pages = ['test2']
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
 const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
