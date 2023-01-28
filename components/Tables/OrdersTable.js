@@ -389,7 +389,7 @@ function DownloadTwo({ params }) {
     },
   }
 
-  const dwnldPdf = () => pdfMake.createPdf(docDef).open()
+  const dwnldPdf = () => pdfMake.createPdf(docDef).download()
 
   React.useEffect(() => {
     console.log('orderDetail', orderDetail)
