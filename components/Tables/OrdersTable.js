@@ -35,7 +35,7 @@ import { queryClient } from '../../pages/_app'
 import pdfmake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs
+// pdfMake.vfs = pdfFonts.pdfMake.vfs
 
 const fontStyle = {
   fontFamily: "'Karla', sans-serif;",
