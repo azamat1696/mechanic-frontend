@@ -390,12 +390,15 @@ function DownloadTwo({ params }) {
   }
 
   const { createPdf } = pdfmake
-  const dwnldPdf = () => createPdf(docDef)
+
+  function dwnldPdf() {
+    createPdf(docDef).download()
+  }
 
   React.useEffect(() => {
     console.log('orderDetail', orderDetail)
     if (orderDetail.length !== 0) {
-      dwnldPdf().download()
+      dwnldPdf()
     }
   }, [orderDetail])
 
