@@ -19,13 +19,13 @@ import Avatar from '@mui/material/Avatar'
 
 // Components
 import LoginModal from '../components/LoginModal'
-import Switch from '../components/Switch'
+// import Switch from '../components/Switch'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
 // import useThemeContext from '../hooks/useThemeContext'
 
-const pages = ['test2']
+const pages = []
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
 const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {

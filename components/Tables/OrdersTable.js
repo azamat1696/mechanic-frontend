@@ -16,7 +16,7 @@ import Backdrop from '@mui/material/Backdrop'
 import Modal from '@mui/material/Modal'
 import Fade from '@mui/material/Fade'
 import DownloadIcon from '@mui/icons-material/Download'
-
+import LinearProgress from '@mui/material/LinearProgress'
 // Hooks
 import {
   deleteCustomerOrder,
@@ -414,9 +414,17 @@ function DownloadTwo({ params }) {
   )
 }
 
-export default React.memo(function OrdersTable({ ordersData }) {
+export default React.memo(function OrdersTable() {
   const { state: authState } = useAuthContext()
   const { authToken } = authState
+
+  const {
+    data: ordersData,
+    status: ordersStatus,
+    // error: ordersError,
+    // isStale: ordersIsStale,
+    // refetch: ordersRefetch,
+  } = useCustomerOrders(authToken)
 
   const [open, setOpen] = React.useState(false)
 
@@ -444,10 +452,19 @@ export default React.memo(function OrdersTable({ ordersData }) {
     setOrder(params.row)
   }
 
+  const [status, setStatus] = React.useState(false)
+  React.useEffect(() => {
+    if (ordersStatus === 'loading') {
+      setStatus(true)
+    } else if (ordersStatus === 'success') {
+      setStatus(false)
+    }
+  }, [ordersStatus])
+
   return (
     <Box sx={{ height: 500 }}>
       <DataGrid
-        rows={ordersData.foundOrders}
+        rows={ordersData !== undefined ? ordersData.foundOrders : []}
         columns={columns}
         pageSize={5}
         density="comfortable"
@@ -455,6 +472,7 @@ export default React.memo(function OrdersTable({ ordersData }) {
         disableDensitySelector
         components={{
           Toolbar: GridToolbar,
+          LoadingOverlay: LinearProgress,
         }}
         componentsProps={{
           toolbar: {
@@ -501,6 +519,7 @@ export default React.memo(function OrdersTable({ ordersData }) {
             handleDelete(id)
           }
         }}
+        loading={status}
       />
       <Modal
         aria-labelledby="transition-modal-title"

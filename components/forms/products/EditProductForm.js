@@ -1,4 +1,6 @@
 import * as React from 'react'
+
+// Material UI
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
@@ -6,6 +8,7 @@ import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
 import Divider from '@mui/material/Divider'
 import Autocomplete from '@mui/material/Autocomplete'
+
 // Icons
 import SaveIcon from '@mui/icons-material/Save'
 import IconButton from '@mui/material/IconButton'
@@ -74,14 +77,21 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
 
   React.useEffect(() => {
     console.log('data', data)
-    const supplierData = data.map((d) => {
-      return {
-        ...d,
-        label: d.name,
-      }
-    })
-    setsuppliersData(supplierData)
+    if (data !== undefined) {
+      const supplierData = data.suppliers.map((d) => {
+        return {
+          ...d,
+          label: d.name,
+        }
+      })
+      setsuppliersData(supplierData)
+    }
   }, [data])
+
+  React.useEffect(() => {
+    console.log('data', data)
+    console.log('suppliersData', suppliersData)
+  }, [data, suppliersData])
 
   return (
     <form>
@@ -151,15 +161,15 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
             <Autocomplete
               disablePortal
               id="combo-box-demo"
-              options={data && suppliersData}
+              options={data !== undefined ? suppliersData : []}
               size="small"
+              disableClearable={true}
               sx={cursorStyle}
               value={product.supplier.name}
               renderInput={(params) => <TextField {...params} />}
               onChange={(e) => {
                 // Loops over suppliers array
                 // find id that matches based on name
-                // setProduct to
                 console.log('supplierData', suppliersData)
                 console.log('e', e.target.innerText)
                 suppliersData.forEach((s) => {
@@ -272,9 +282,7 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
           <Grid item xs={12}>
             <LoadingButton
               color="secondary"
-              onClick={() => {
-                mutate(product)
-              }}
+              onClick={() => mutate(product)}
               loading={loading}
               loadingPosition="start"
               startIcon={<SaveIcon />}

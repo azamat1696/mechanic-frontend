@@ -240,8 +240,16 @@ const Img = ({ params }) => {
 }
 
 export default React.memo(function DataTable({ products, loading }) {
-  const { state: authState, dispatch: authDispatch } = useAuthContext()
-  const { authToken, merchantDetails } = authState
+  const { state: authState } = useAuthContext()
+  const { authToken } = authState
+
+  const {
+    data: productsData,
+    status: productsStatus,
+    // error: productError,
+    // isStale: productsIsStale,
+    // refetch: productsRefetch,
+  } = useProductsByMerchantData(authToken)
 
   const [open, setOpen] = React.useState(false)
   const [product, setProduct] = React.useState({})
@@ -257,6 +265,16 @@ export default React.memo(function DataTable({ products, loading }) {
     },
   })
 
+  const [status, setStatus] = React.useState(false)
+
+  React.useEffect(() => {
+    if (productsStatus === 'loading') {
+      setStatus(true)
+    } else if (productsStatus === 'success') {
+      setStatus(false)
+    }
+  }, [productsStatus])
+
   return (
     <Box sx={{ height: 500 }}>
       <DataGrid
@@ -264,6 +282,7 @@ export default React.memo(function DataTable({ products, loading }) {
         disableDensitySelector
         density="comfortable"
         filterMode="client"
+        rows={productsData !== undefined ? productsData.products : []}
         components={{
           Toolbar: GridToolbar,
           LoadingOverlay: LinearProgress,
@@ -296,10 +315,9 @@ export default React.memo(function DataTable({ products, loading }) {
           },
           ...fontStyle,
         }}
-        rows={loading ? [] : products.products}
         columns={columns}
         pageSize={5}
-        loading={loading}
+        loading={status}
         rowsPerPageOptions={[5]}
         rowHeight={47.5}
         disableVirtualization={true}

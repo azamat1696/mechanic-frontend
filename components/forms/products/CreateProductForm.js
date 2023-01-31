@@ -78,7 +78,7 @@ export default function CreateProductForm({ handleClose }) {
   React.useEffect(() => {
     console.log('data', data)
     if (data) {
-      setSuppliers(data)
+      setSuppliers(data.suppliers)
     }
   }, [data])
 
@@ -86,6 +86,7 @@ export default function CreateProductForm({ handleClose }) {
 
   React.useEffect(() => {
     if (suppliers) {
+      console.log('suppliers', suppliers)
       const newArr = suppliers.map((s) => {
         return {
           ...s,

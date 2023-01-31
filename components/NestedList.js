@@ -32,7 +32,10 @@ const btnStyle = {
   justifyContent: 'space-between',
 }
 
-const fontStyle = { fontFamily: "'Karla', sans-serif;", fontWeight: 500 }
+const fontStyle = {
+  fontFamily: "'Karla', sans-serif;",
+  fontWeight: 500,
+}
 
 export default function NestedList({ comp, setComp }) {
   const [openOrders, setOpenOrders] = React.useState(false)

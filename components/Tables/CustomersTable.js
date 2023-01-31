@@ -11,6 +11,7 @@ import Backdrop from '@mui/material/Backdrop'
 import Modal from '@mui/material/Modal'
 import Fade from '@mui/material/Fade'
 import { GridToolbar } from '@mui/x-data-grid'
+import LinearProgress from '@mui/material/LinearProgress'
 
 // Components
 import EditCustomerForm from '../forms/customers/EditCustomerForm'
@@ -20,6 +21,7 @@ import useAuthContext from '../../hooks/useAuthContext'
 
 // Hooks
 import { deleteCustomer } from '../../hooks/useAsyncHooks'
+import { useCustomersByMerchant } from '../../hooks/useAsyncHooks'
 
 // React Query
 import { useMutation } from '@tanstack/react-query'
@@ -159,10 +161,14 @@ const DeleteBtn = () => {
   )
 }
 
-export default React.memo(function CustomersTable({ customers }) {
+export default React.memo(function CustomersTable() {
   const { state: authState } = useAuthContext()
   const { authToken } = authState
 
+  const { data: customersData, status: customersStatus } =
+    useCustomersByMerchant(authToken)
+
+  const [status, setStatus] = React.useState(false)
   const [open, setOpen] = React.useState(false)
 
   const [customer, setCustomer] = React.useState({})
@@ -178,14 +184,23 @@ export default React.memo(function CustomersTable({ customers }) {
     },
   })
 
+  React.useEffect(() => {
+    if (customersStatus === 'loading') {
+      setStatus(true)
+    } else if (customersStatus === 'success') {
+      setStatus(false)
+    }
+  }, [customersStatus])
+
   return (
     <Box sx={{ height: 500 }}>
       <DataGrid
-        components={{ Toolbar: GridToolbar }}
+        components={{ Toolbar: GridToolbar, LoadingOverlay: LinearProgress }}
         // disableColumnFilter
         disableDensitySelector
         density="comfortable"
         filterMode="client"
+        rows={customersData !== undefined ? customersData.customers : []}
         componentsProps={{
           toolbar: {
             showQuickFilter: true,
@@ -214,7 +229,6 @@ export default React.memo(function CustomersTable({ customers }) {
           },
           ...fontStyle,
         }}
-        rows={customers}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}
@@ -230,6 +244,7 @@ export default React.memo(function CustomersTable({ customers }) {
             handleDelete(params.row.id)
           }
         }}
+        loading={status}
       />
       <Modal
         aria-labelledby="transition-modal-title"

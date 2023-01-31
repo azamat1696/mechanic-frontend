@@ -9,7 +9,7 @@ import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import DownloadIcon from '@mui/icons-material/Download'
 import EditIcon from '@mui/icons-material/Edit'
-
+import LinearProgress from '@mui/material/LinearProgress'
 import Backdrop from '@mui/material/Backdrop'
 import Modal from '@mui/material/Modal'
 import Fade from '@mui/material/Fade'
@@ -392,14 +392,32 @@ function DownloadTwo({ params }) {
   )
 }
 
-export default function PurchasesTable({
-  purchaseOrdersData,
-  handlePurchaseSelection,
-}) {
-  const [pageSize, setPageSize] = React.useState(10)
-
+export default function PurchasesTable(
+  {
+    // purchaseOrdersData,
+    // handlePurchaseSelection,
+  }
+) {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const { authToken } = authState
+
+  const [purchaseOrder, setPurchaseOrder] = React.useState({
+    id: null,
+    data: null,
+  })
+
+  function handlePurchaseSelection(params) {
+    const { id } = params.row
+    setPurchaseOrder({ id, data: params.row })
+  }
+
+  const {
+    data: purchaseOrdersData,
+    status: purchaseOrdersStatus,
+    // error: purchaseOrdersError,
+    // isStale: purchaseOrdersIsStale,
+    // refetch: purchaseOrdersRefetch,
+  } = usePurchaseOrder(authToken)
 
   const [open, setOpen] = React.useState(false)
 
@@ -423,17 +441,34 @@ export default function PurchasesTable({
 
   const handleDelete = (i) => mutate(i)
 
+  // React.useEffect(() => {
+  //   if (purchaseOrdersData) {
+  //     console.log('purchaseOrdersData', purchaseOrdersData.orders)
+  //   }
+  // }, [purchaseOrdersData])
+
+  const [status, setStatus] = React.useState(false)
+
+  React.useEffect(() => {
+    if (purchaseOrdersStatus === 'loading') {
+      setStatus(true)
+    } else if (purchaseOrdersStatus === 'success') {
+      setStatus(false)
+    }
+  }, [purchaseOrdersStatus])
+
   return (
     <Box sx={{ height: 500 }}>
       <DataGrid
-        rows={purchaseOrdersData.orders}
+        rows={purchaseOrdersData !== undefined ? purchaseOrdersData.orders : []}
         columns={columns}
-        pageSize={pageSize}
+        pageSize={5}
         disableColumnFilter
         density="comfortable"
         disableDensitySelector
         components={{
           Toolbar: GridToolbar,
+          LoadingOverlay: LinearProgress,
         }}
         componentsProps={{
           toolbar: {
@@ -478,6 +513,7 @@ export default function PurchasesTable({
             handleEdit(id, params)
           }
         }}
+        loading={status}
       />
       <Modal
         aria-labelledby="transition-modal-title"

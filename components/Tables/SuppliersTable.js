@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import Backdrop from '@mui/material/Backdrop'
 import Modal from '@mui/material/Modal'
 import Fade from '@mui/material/Fade'
+import LinearProgress from '@mui/material/LinearProgress'
 
 // Hooks
 import useRenderCount from '../../hooks/useRenderCount'
@@ -236,11 +237,27 @@ export default function SuppliersTable({ suppliers }) {
     console.log('s', s)
   }, [s])
 
+  React.useEffect(() => {
+    if (suppliersData) {
+      console.log('suppliersData', suppliersData)
+    }
+  }, [suppliersData])
+
+  const [status, setStatus] = React.useState(false)
+  React.useEffect(() => {
+    if (suppliersStatus === 'loading') {
+      setStatus(true)
+    } else if (suppliersStatus === 'success') {
+      setStatus(false)
+    }
+  }, [suppliersStatus])
+
   return (
     <Box sx={{ height: 500 }}>
       <DataGrid
         // rows={s !== null ? s : []}
-        rows={suppliers}
+        // rows={suppliers}
+        rows={suppliersData !== undefined ? suppliersData.suppliers : []}
         columns={columns}
         pageSize={5}
         // disableColumnFilter
@@ -249,6 +266,7 @@ export default function SuppliersTable({ suppliers }) {
         filterMode="client"
         components={{
           Toolbar: GridToolbar,
+          LoadingOverlay: LinearProgress,
         }}
         componentsProps={{
           toolbar: {
@@ -288,6 +306,7 @@ export default function SuppliersTable({ suppliers }) {
             handleDelete(params.id)
           }
         }}
+        loading={status}
       />
       <Modal
         aria-labelledby="transition-modal-title"

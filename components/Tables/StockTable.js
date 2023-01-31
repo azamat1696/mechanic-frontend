@@ -8,6 +8,9 @@ import LinearProgress from '@mui/material/LinearProgress'
 import Skeleton from '@mui/material/Skeleton'
 import Chip from '@mui/material/Chip'
 
+import { useStockByMerchantData } from '../../hooks/useAsyncHooks'
+import useAuthContext from '../../hooks/useAuthContext'
+
 const fontStyle = {
   fontFamily: "'Karla', sans-serif;",
   fontWeight: 400,
@@ -141,11 +144,32 @@ const MinChip = ({ params }) => {
   }
 }
 
-export default React.memo(function DataTable({ stock, stockLoading }) {
+export default React.memo(function DataTable({}) {
+  const { state: authState } = useAuthContext()
+  const {
+    authToken,
+    merchantDetails: { id },
+  } = authState
+
+  const [status, setStatus] = React.useState(false)
+
+  const { data: stockData, status: stockStatus } = useStockByMerchantData(
+    authToken,
+    id
+  )
+
+  React.useEffect(() => {
+    if (stockStatus === 'loading') {
+      setStatus(true)
+    } else if (stockStatus === 'success') {
+      setStatus(false)
+    }
+  }, [stockStatus])
+
   return (
     <Box sx={{ height: '500px' }}>
       <DataGrid
-        rows={stock}
+        rows={stockData !== undefined ? stockData : []}
         getRowId={(row) => row.productId}
         // disableColumnFilter
         disableDensitySelector
@@ -187,7 +211,7 @@ export default React.memo(function DataTable({ stock, stockLoading }) {
         pageSize={5}
         rowsPerPageOptions={[5]}
         rowHeight={47.5}
-        loading={stockLoading}
+        loading={status}
       />
     </Box>
   )

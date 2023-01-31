@@ -176,7 +176,7 @@ export default function CreateOrderForm({ handleClose }) {
   React.useEffect(() => {
     data &&
       setCustomerList(
-        data.map((d) => {
+        data.customers.map((d) => {
           return {
             ...d,
             label: `${d.firstName} ${d.lastName}`,
