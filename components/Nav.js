@@ -23,7 +23,7 @@ import useAuthContext from '../hooks/useAuthContext'
 const pages = ['']
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
-const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
+const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null)
   const [anchorElUser, setAnchorElUser] = React.useState(null)
 
@@ -34,30 +34,11 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
   const handleCloseNavMenu = () => setAnchorElNav(null)
   const handleCloseUserMenu = () => setAnchorElUser(null)
 
-  React.useEffect(() => {
-    console.log('authState', authState)
-  }, [authState])
-
   return (
     <AppBar position="static" sx={{ backgroundColor: '#444d56' }}>
       <Container maxWidth="md">
         <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.2rem',
-              color: 'inherit',
-              textDecoration: 'none',
-              textTransform: 'uppercase',
-            }}
-          >
+          <Typography variant="h6" noWrap component="a" href="/" sx={mobTitle}>
             Mechanic
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -100,23 +81,7 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-              textTransform: 'uppercase',
-            }}
-          >
+          <Typography variant="h5" noWrap component="a" href="" sx={deskTitle}>
             Mechanic
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -138,11 +103,7 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
 
           <Box sx={{ mb: 0.5, mr: 3 }}>{authState.merchantDetails.name}</Box>
           <Box sx={{ flexGrow: 0 }}>
-            <LoginModal
-              login={login}
-              setLogin={setLogin}
-              userLogin={userLogin}
-            />
+            <LoginModal />
           </Box>
         </Toolbar>
       </Container>
@@ -151,3 +112,26 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
 }
 
 export default React.memo(ResponsiveAppBar)
+
+const mobTitle = {
+  mr: 2,
+  display: { xs: 'none', md: 'flex' },
+  fontFamily: 'monospace',
+  fontWeight: 700,
+  letterSpacing: '.2rem',
+  color: 'inherit',
+  textDecoration: 'none',
+  textTransform: 'uppercase',
+}
+
+const deskTitle = {
+  mr: 2,
+  display: { xs: 'flex', md: 'none' },
+  flexGrow: 1,
+  fontFamily: 'monospace',
+  fontWeight: 700,
+  letterSpacing: '.3rem',
+  color: 'inherit',
+  textDecoration: 'none',
+  textTransform: 'uppercase',
+}
