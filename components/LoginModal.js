@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
-// import useThemeContext from '../hooks/useThemeContext'
+import { queryClient } from '../pages/_app'
 
 const style = {
   position: 'absolute',
@@ -29,29 +29,24 @@ const style = {
 
 export default function BasicModal() {
   const router = useRouter()
+
   // Modal
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
-  const handleClose = () => {
-    setOpen(false)
-  }
+  const handleClose = () => setOpen(false)
   // Modal
-
-  // const { theme } = useThemeContext()
 
   // Login
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const [login, setLogin] = React.useState({
-    email: 'merchant11@gmail.com',
-    password: 'test1234',
-    // email: '',
-    // password: '',
+    // email: 'merchant11@gmail.com',
+    // password: 'test1234',
+    email: '',
+    password: '',
   })
 
   function handleLogout() {
-    authDispatch({
-      type: 'reset',
-    })
+    authDispatch({ type: 'reset' })
     router.push('/')
   }
 
@@ -67,13 +62,14 @@ export default function BasicModal() {
     }
 
     try {
+      const { NEXT_PUBLIC_BASE_URL } = process.env
       const res = await fetch(
-        // `https://api.mechanic.neareasttechnology.net/auth/login/merchant`,
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/merchant`,
-        // 'http://localhost:8000/api/auth/login/merchant',
+        `${NEXT_PUBLIC_BASE_URL}/auth/login/merchant`,
         myInit
       )
+
       const data = await res.json()
+      queryClient.invalidateQueries()
       authDispatch({
         type: 'setAuthToken',
         payload: data.access_token,
@@ -127,7 +123,7 @@ export default function BasicModal() {
             id="outlined-required"
             label="email"
             type="email"
-            defaultValue={'merchant11@gmail.com'}
+            // defaultValue={'merchant11@gmail.com'}
             inputProps={{
               autocomplete: 'password',
               form: {
@@ -143,7 +139,7 @@ export default function BasicModal() {
             id="outlined-password-input"
             label="password"
             type="password"
-            defaultValue={'test1234'}
+            // defaultValue={'test1234'}
             autoComplete="off"
             size="small"
             onChange={(e) => setLogin({ ...login, password: e.target.value })}
@@ -151,12 +147,12 @@ export default function BasicModal() {
           <Button
             variant="contained"
             onClick={userLogin}
-            // sx={{
-            //   backgroundColor: theme === true ? '#3c5f83' : '#444d56',
-            //   '&:hover': {
-            //     backgroundColor: theme === true ? '#3c5f83' : '#444d56',
-            //   },
-            // }}
+            sx={{
+              backgroundColor: '#444d56',
+              '&:hover': {
+                backgroundColor: '#444d56',
+              },
+            }}
           >
             Login
           </Button>

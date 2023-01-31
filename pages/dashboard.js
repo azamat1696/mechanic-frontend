@@ -54,20 +54,11 @@ export default React.memo(function Dashboard() {
     if (isAuthenticated) {
       router.push('/dashboard')
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated])
 
   return (
     <div style={{ minHeight: '100%', marginTop: '20px' }}>
-      <Grid
-        container
-        spacing={0}
-        gap={3}
-        sx={{
-          width: '90%',
-          margin: '0 auto',
-          height: '100%',
-        }}
-      >
+      <Grid container spacing={0} gap={3} sx={gridStyle}>
         <Grid item xs={1.5}>
           <NestedList comp={comp} setComp={setComp} />
         </Grid>
@@ -78,3 +69,9 @@ export default React.memo(function Dashboard() {
     </div>
   )
 })
+
+const gridStyle = {
+  width: '90%',
+  margin: '0 auto',
+  height: '100%',
+}

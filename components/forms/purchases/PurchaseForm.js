@@ -152,7 +152,7 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
   React.useEffect(() => {
     data &&
       setSupplier(
-        data.map((d) => {
+        data.suppliers.map((d) => {
           console.log('d', d)
           return {
             ...d,
@@ -245,6 +245,7 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
             />
           )}
           onChange={(e) => handleSupplierChange(e)}
+          disableClearable={true}
         />
         <Button
           variant="outlined"

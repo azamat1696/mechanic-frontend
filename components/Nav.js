@@ -13,17 +13,12 @@ import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import MenuIcon from '@mui/icons-material/Menu'
 import AdbIcon from '@mui/icons-material/Adb'
-// import Avatar from '@mui/material/Avatar'
-
-// import { useTheme } from '@mui/material/styles'
 
 // Components
 import LoginModal from '../components/LoginModal'
-// import Switch from '../components/Switch'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
-// import useThemeContext from '../hooks/useThemeContext'
 
 const pages = ['']
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
@@ -32,36 +27,21 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null)
   const [anchorElUser, setAnchorElUser] = React.useState(null)
 
-  const { state: authState, dispatch: authDispatch } = useAuthContext()
+  const { state: authState } = useAuthContext()
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget)
-  }
+  const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget)
+  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget)
+  const handleCloseNavMenu = () => setAnchorElNav(null)
+  const handleCloseUserMenu = () => setAnchorElUser(null)
 
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget)
-  }
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null)
-  }
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null)
-  }
-
-  // const { theme, setTheme } = useThemeContext()
+  React.useEffect(() => {
+    console.log('authState', authState)
+  }, [authState])
 
   return (
-    <AppBar
-      position="static"
-      sx={{
-        backgroundColor: '#444d56', // theme === true ? '#3c5f83' : '#444d56',
-      }}
-    >
+    <AppBar position="static" sx={{ backgroundColor: '#444d56' }}>
       <Container maxWidth="md">
         <Toolbar disableGutters>
-          {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
           <Typography
             variant="h6"
             noWrap
@@ -80,7 +60,6 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
           >
             Mechanic
           </Typography>
-
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -156,9 +135,6 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
                 )
             )}
           </Box>
-          {/* <Box sx={{ flexGrow: 0, ml: 5 }}>
-            <Switch theme={theme} setTheme={setTheme} />
-          </Box> */}
 
           <Box sx={{ mb: 0.5, mr: 3 }}>{authState.merchantDetails.name}</Box>
           <Box sx={{ flexGrow: 0 }}>
@@ -173,4 +149,5 @@ const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
     </AppBar>
   )
 }
+
 export default React.memo(ResponsiveAppBar)
