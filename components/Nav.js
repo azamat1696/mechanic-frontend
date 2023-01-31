@@ -13,7 +13,7 @@ import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import MenuIcon from '@mui/icons-material/Menu'
 import AdbIcon from '@mui/icons-material/Adb'
-import Avatar from '@mui/material/Avatar'
+// import Avatar from '@mui/material/Avatar'
 
 // import { useTheme } from '@mui/material/styles'
 
@@ -25,7 +25,7 @@ import LoginModal from '../components/LoginModal'
 import useAuthContext from '../hooks/useAuthContext'
 // import useThemeContext from '../hooks/useThemeContext'
 
-const pages = []
+const pages = ['']
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
 const ResponsiveAppBar = ({ token, setToken, login, setLogin, userLogin }) => {
