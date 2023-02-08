@@ -56,8 +56,8 @@ export default function CreateProductForm({ handleClose }) {
     minimum: '',
   })
 
-  const { state: authState, dispatch: authDispatch } = useAuthContext()
-  const { authToken, merchantDetails } = authState
+  const { state: authState } = useAuthContext()
+  const { authToken } = authState
 
   const { data } = useSuppliersByMerchant(authToken)
 
@@ -68,6 +68,7 @@ export default function CreateProductForm({ handleClose }) {
       setLoading(!loading)
       queryClient.invalidateQueries({ queryKey: [`productsByMerchant`] })
       queryClient.invalidateQueries({ queryKey: [`stockByMerchant`] })
+      queryClient.invalidateQueries({ queryKey: [`suppliersByMerchant`] })
     },
   })
 

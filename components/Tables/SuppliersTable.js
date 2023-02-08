@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 // Material UI
-import { DataGrid, GridToolbar } from '@mui/x-data-grid'
+import { DataGrid, GridToolbar, trTR } from '@mui/x-data-grid'
 import Box from '@mui/material/Box'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import IconButton from '@mui/material/IconButton'
@@ -257,6 +257,7 @@ export default function SuppliersTable({ suppliers }) {
       <DataGrid
         // rows={s !== null ? s : []}
         // rows={suppliers}
+        localeText={trTR.components.MuiDataGrid.defaultProps.localeText}
         rows={suppliersData !== undefined ? suppliersData.suppliers : []}
         columns={columns}
         pageSize={5}

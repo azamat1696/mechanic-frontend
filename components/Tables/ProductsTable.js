@@ -2,7 +2,7 @@ import * as React from 'react'
 import Image from 'next/image'
 
 // Material UI
-import { DataGrid, GridToolbar } from '@mui/x-data-grid'
+import { DataGrid, GridToolbar, trTR } from '@mui/x-data-grid'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Box from '@mui/material/Box'
 import Backdrop from '@mui/material/Backdrop'
@@ -128,6 +128,7 @@ const columns = [
     headerAlign: 'center',
     filterable: true,
     valueGetter: (params) => {
+      return params.row.costPrice.toFixed(2)
       const formatter = new Intl.NumberFormat('tr-TR', {
         style: 'currency',
         currency: 'TRY',
@@ -145,7 +146,16 @@ const columns = [
     align: 'center',
     headerAlign: 'center',
     filterable: true,
+    // valueFormatter: ({ value }) => {
+    //   const formatter = new Intl.NumberFormat('tr-TR', {
+    //     style: 'currency',
+    //     currency: 'TRY',
+    //   })
+    //   return `${value} TL`
+    //   // return `${value * 100}%`,
+    // },
     valueGetter: (params) => {
+      return params.row.retailPrice.toFixed(2)
       const formatter = new Intl.NumberFormat('tr-TR', {
         style: 'currency',
         currency: 'TRY',
@@ -224,13 +234,14 @@ const DeleteBtn = () => {
 }
 
 const Img = ({ params }) => {
+  console.log('params', params.row.url)
   const myLoader = ({ width, quality }) => {
-    return `${params.value}?w=${width}&q=${quality || 25}`
+    return `${params.row.url}?w=${width}&q=${quality || 25}`
   }
   return (
     <Image
       loader={myLoader}
-      src={`${params.value}`}
+      src={`${params.row.url}`}
       alt="Picture"
       width={45}
       height={45}
@@ -278,7 +289,8 @@ export default React.memo(function DataTable({ products, loading }) {
   return (
     <Box sx={{ height: 500 }}>
       <DataGrid
-        disableColumnFilter
+        localeText={trTR.components.MuiDataGrid.defaultProps.localeText}
+        // disableColumnFilter
         disableDensitySelector
         density="comfortable"
         filterMode="client"

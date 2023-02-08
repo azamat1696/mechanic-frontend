@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 // Material UI
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid, GridToolbar, trTR } from '@mui/x-data-grid'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import IconButton from '@mui/material/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -10,7 +10,6 @@ import Box from '@mui/material/Box'
 import Backdrop from '@mui/material/Backdrop'
 import Modal from '@mui/material/Modal'
 import Fade from '@mui/material/Fade'
-import { GridToolbar } from '@mui/x-data-grid'
 import LinearProgress from '@mui/material/LinearProgress'
 
 // Components
@@ -195,6 +194,7 @@ export default React.memo(function CustomersTable() {
   return (
     <Box sx={{ height: 500 }}>
       <DataGrid
+        localeText={trTR.components.MuiDataGrid.defaultProps.localeText}
         components={{ Toolbar: GridToolbar, LoadingOverlay: LinearProgress }}
         // disableColumnFilter
         disableDensitySelector

@@ -39,10 +39,10 @@ export default function BasicModal() {
   // Login
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const [login, setLogin] = React.useState({
-    // email: 'merchant11@gmail.com',
-    // password: 'test1234',
-    email: '',
-    password: '',
+    email: 'merchant11@gmail.com',
+    password: 'test1234',
+    // email: '',
+    // password: '',
   })
 
   function handleLogout() {
@@ -123,7 +123,7 @@ export default function BasicModal() {
             id="outlined-required"
             label="email"
             type="email"
-            // defaultValue={'merchant11@gmail.com'}
+            defaultValue={'merchant11@gmail.com'}
             inputProps={{
               autocomplete: 'password',
               form: {
@@ -139,7 +139,7 @@ export default function BasicModal() {
             id="outlined-password-input"
             label="password"
             type="password"
-            // defaultValue={'test1234'}
+            defaultValue={'test1234'}
             autoComplete="off"
             size="small"
             onChange={(e) => setLogin({ ...login, password: e.target.value })}

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
-import { DataGrid, GridToolbar } from '@mui/x-data-grid'
+import { DataGrid, GridToolbar, trTR } from '@mui/x-data-grid'
 
 import FormControlLabel from '@mui/material/FormControlLabel'
 import IconButton from '@mui/material/IconButton'
@@ -460,10 +460,11 @@ export default function PurchasesTable(
   return (
     <Box sx={{ height: 500 }}>
       <DataGrid
+        localeText={trTR.components.MuiDataGrid.defaultProps.localeText}
         rows={purchaseOrdersData !== undefined ? purchaseOrdersData.orders : []}
         columns={columns}
         pageSize={5}
-        disableColumnFilter
+        // disableColumnFilter
         density="comfortable"
         disableDensitySelector
         components={{

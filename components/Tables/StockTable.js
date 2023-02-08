@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 // Material UI
 import Box from '@mui/material/Box'
-import { DataGrid, GridToolbar } from '@mui/x-data-grid'
+import { DataGrid, GridToolbar, trTR } from '@mui/x-data-grid'
 import LinearProgress from '@mui/material/LinearProgress'
 import Skeleton from '@mui/material/Skeleton'
 import Chip from '@mui/material/Chip'
@@ -131,7 +131,15 @@ const columns = [
     width: 100,
     align: 'center',
     headerAlign: 'center',
-    renderCell: (params) => <MinChip params={params} />,
+    // renderCell: (params) => <MinChip params={params} />,
+    valueGetter: (params) => {
+      const { min, inStock } = params.row
+      if (inStock <= min) {
+        return `Low`
+      } else {
+        return `Ok`
+      }
+    },
   },
 ]
 
@@ -169,6 +177,7 @@ export default React.memo(function DataTable({}) {
   return (
     <Box sx={{ height: '500px' }}>
       <DataGrid
+        localeText={trTR.components.MuiDataGrid.defaultProps.localeText}
         rows={stockData !== undefined ? stockData : []}
         getRowId={(row) => row.productId}
         // disableColumnFilter

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
-import { DataGrid, GridToolbar } from '@mui/x-data-grid'
+import { DataGrid, GridToolbar, trTR } from '@mui/x-data-grid'
 
 // Components
 import EditOrderForm from '../forms/orders/EditOrderForm'
@@ -60,14 +60,16 @@ const columns = [
     headerName: 'ID',
     width: 80,
     hide: false,
+    sortable: false,
     align: 'center',
     headerAlign: 'center',
   },
   {
-    field: 'supplier',
+    field: 'customer',
     headerName: 'Customer Name',
     width: 150,
     editable: false,
+    sortable: false,
     align: 'center',
     headerAlign: 'center',
     valueGetter: (params) => {
@@ -79,6 +81,7 @@ const columns = [
     headerName: 'Description',
     width: 125,
     editable: false,
+    sortable: false,
     align: 'center',
     headerAlign: 'center',
   },
@@ -113,12 +116,12 @@ const columns = [
       ttlsArr.length > 0
         ? (totalOrderRtl = ttlsArr.reduce((acc, cv) => acc + cv))
         : (totalOrderRtl = 0)
-      const formatter = new Intl.NumberFormat('tr-TR', {
-        style: 'currency',
-        currency: 'TRY',
-      })
-
-      return formatter.format(totalOrderRtl)
+      return totalOrderRtl.toFixed(2)
+      // const formatter = new Intl.NumberFormat('tr-TR', {
+      //   style: 'currency',
+      //   currency: 'TRY',
+      // })
+      // return formatter.format(totalOrderRtl)
     },
   },
   {
@@ -128,7 +131,11 @@ const columns = [
     width: 120,
     align: 'center',
     headerAlign: 'center',
-    renderCell: (params) => <StatusChip params={params} />,
+    filterable: true,
+    // renderCell: (params) => <StatusChip params={params} />,
+    valueGetter: (params) => {
+      return `${params.row.status}`
+    },
   },
 
   {
@@ -191,11 +198,11 @@ const DeleteBtn = ({ params }) => {
 const StatusChip = ({ params }) => {
   const { status } = params.row
   if (status === 'Waiting') {
-    return <Chip label="Waiting" color="error" variant="outlined" />
+    return 'Waiting' //<Chip label={status} color="error" variant="outlined" />
   } else if (status === 'In Progress') {
-    return <Chip label="In Progress" color="primary" variant="outlined" />
+    return <Chip label={status} color="primary" variant="outlined" />
   } else if (status === 'Complete') {
-    return <Chip label="Complete" color="success" variant="outlined" />
+    return <Chip label={status} color="success" variant="outlined" />
   }
 }
 
@@ -468,7 +475,8 @@ export default React.memo(function OrdersTable() {
         columns={columns}
         pageSize={5}
         density="comfortable"
-        disableColumnFilter
+        localeText={trTR.components.MuiDataGrid.defaultProps.localeText}
+        // disableColumnFilter
         disableDensitySelector
         components={{
           Toolbar: GridToolbar,

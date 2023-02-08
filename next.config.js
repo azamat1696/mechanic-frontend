@@ -2,7 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost', 'https://mechanic.herokuapp.com'],
+    domains: [
+      'localhost',
+      'https://mechanic.herokuapp.com',
+      'https://mechanic-net.s3.eu-central-1.amazonaws.com',
+    ],
   },
   env: {
     mapbox_key:

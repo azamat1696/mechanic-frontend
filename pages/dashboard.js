@@ -62,7 +62,7 @@ export default React.memo(function Dashboard() {
         <Grid item xs={1.5}>
           <NestedList comp={comp} setComp={setComp} />
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={10}>
           <Item sx={{ ml: 1 }}>{renderComp()}</Item>
         </Grid>
       </Grid>

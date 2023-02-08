@@ -30,7 +30,7 @@ export function useCustomerOrders(token) {
 }
 // Fetch Orders Data
 
-export async function createCustomerOrder(token, products, customer) {
+export async function createCustomerOrder(token, data) {
   console.log('async create customer triggered')
   const myInit = {
     method: 'POST',
@@ -40,12 +40,13 @@ export async function createCustomerOrder(token, products, customer) {
     },
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify({
-      customerId: customer,
-      products: products.products,
-      description: 'Service',
-      name: 'test',
-    }),
+    body: JSON.stringify(data),
+    // body: JSON.stringify({
+    //   customerId: customer,
+    //   products: products.products,
+    //   description: 'Service',
+    //   name: 'test',
+    // }),
   }
 
   try {

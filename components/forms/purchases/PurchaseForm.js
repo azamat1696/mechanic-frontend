@@ -331,7 +331,9 @@ export default function PurchaseForm({ handleClose, setO: setOpen }) {
                     disabled={true}
                     InputProps={{ inputProps: { min: 0, defaultValue: 0 } }}
                     variant="filled"
-                    value={rows.products[row.id].price}
+                    value={
+                      rows.products.length > 0 ? rows.products[row.id].price : 0
+                    }
                     // onChange={(e) => handlePriceChange(e, row)}
                   />
                   {/* DELETE ROW */}
