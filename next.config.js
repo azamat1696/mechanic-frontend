@@ -2,14 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'mechanic-net.s3.eu-central-1.amazonaws.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+    // remotePatterns: [
+    //   {
+    //     protocol: 'https',
+    //     hostname: 'mechanic-net.s3.eu-central-1.amazonaws.com',
+    //     port: '',
+    //     pathname: '/**',
+    //   },
+    // ],
     domains: [
       'localhost',
       'https://mechanic.herokuapp.com',
