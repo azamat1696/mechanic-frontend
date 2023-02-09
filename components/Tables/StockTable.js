@@ -40,13 +40,14 @@ const columns = [
     align: 'center',
     headerAlign: 'center',
     renderCell: (params) => {
-      const myLoader = ({ width, quality }) => {
-        return `${params.value}?w=${width}&q=${quality || 25}`
-      }
+      // const myLoader = ({ width, quality }) => {
+      //   return `${params.row.url}?w=${width}&q=${quality || 25}`
+      // }
+      const myLoader = ({ width, quality }) => `${params.row.url}`
       return (
         <Image
           loader={myLoader}
-          src={`${params.value}`}
+          src={params.row.url}
           alt="Picture"
           width={45}
           height={45}
@@ -178,7 +179,7 @@ export default React.memo(function DataTable({}) {
     <Box sx={{ height: '500px' }}>
       <DataGrid
         localeText={trTR.components.MuiDataGrid.defaultProps.localeText}
-        rows={stockData !== undefined ? stockData : []}
+        rows={stockData !== undefined ? stockData.arr : []}
         getRowId={(row) => row.productId}
         // disableColumnFilter
         disableDensitySelector

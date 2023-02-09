@@ -71,7 +71,7 @@ const columns = [
     filterable: false,
     align: 'center',
     headerAlign: 'center',
-    renderCell: (params) => <Img params={params} />,
+    renderCell: (params) => <Img url={params.row.url} />,
   },
   {
     field: 'name',
@@ -233,15 +233,15 @@ const DeleteBtn = () => {
   )
 }
 
-const Img = ({ params }) => {
-  console.log('params', params.row.url)
-  const myLoader = ({ width, quality }) => {
-    return `${params.row.url}?w=${width}&q=${quality || 25}`
-  }
+const Img = ({ url }) => {
+  console.log('url', url)
+  // const myLoader = ({ width, quality }) =>
+  //   `${url}?w=${width}&q=${quality || 25}`
+  const myLoader = ({ width, quality }) => `${url}`
   return (
     <Image
       loader={myLoader}
-      src={`${params.row.url}`}
+      src={url}
       alt="Picture"
       width={45}
       height={45}
@@ -250,17 +250,12 @@ const Img = ({ params }) => {
   )
 }
 
-export default React.memo(function DataTable({ products, loading }) {
+export default React.memo(function DataTable() {
   const { state: authState } = useAuthContext()
   const { authToken } = authState
 
-  const {
-    data: productsData,
-    status: productsStatus,
-    // error: productError,
-    // isStale: productsIsStale,
-    // refetch: productsRefetch,
-  } = useProductsByMerchantData(authToken)
+  const { data: productsData, status: productsStatus } =
+    useProductsByMerchantData(authToken)
 
   const [open, setOpen] = React.useState(false)
   const [product, setProduct] = React.useState({})

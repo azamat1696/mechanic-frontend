@@ -20,7 +20,7 @@ import LoginModal from '../components/LoginModal'
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
 
-const pages = ['test']
+const pages = ['']
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
 const ResponsiveAppBar = () => {
