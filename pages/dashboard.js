@@ -1,13 +1,9 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 
 // Components
-import StockTable from '../components/Tables/StockTable'
 import ProductsTable from '../components/Tables/ProductsTable'
-import CustomersTable from '../components/Tables/CustomersTable'
-import PurchasesTable from '../components/Tables/PurchasesTable'
-import SuppliersTable from '../components/Tables/SuppliersTable'
-import OrdersTable from '../components/Tables/OrdersTable'
 import NestedList from '../components/NestedList'
 
 // Hooks
@@ -17,6 +13,53 @@ import useAuthContext from '../hooks/useAuthContext'
 import { styled } from '@mui/material/styles'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
+import Skeleton from '@mui/material/Skeleton'
+
+const fallback = () => 'Loading ...'
+
+const StockTable = dynamic(() => import('../components/Tables/StockTable'), {
+  loading: () => (
+    <Skeleton variant="rectangular" sx={skeletonStyles} animation="wave" />
+  ),
+})
+const CustomersTable = dynamic(
+  () => import('../components/Tables/CustomersTable'),
+  {
+    loading: () => (
+      <Skeleton variant="rectangular" sx={skeletonStyles} animation="wave" />
+    ),
+  }
+)
+const PurchasesTable = dynamic(
+  () => import('../components/Tables/PurchasesTable'),
+  {
+    loading: () => (
+      <Skeleton variant="rectangular" sx={skeletonStyles} animation="wave" />
+    ),
+  }
+)
+const SuppliersTable = dynamic(
+  () => import('../components/Tables/SuppliersTable'),
+  {
+    loading: () => (
+      <Skeleton variant="rectangular" sx={skeletonStyles} animation="wave" />
+    ),
+  }
+)
+
+const skeletonStyles = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+}
+
+const OrdersTable = dynamic(() => import('../components/Tables/OrdersTable'), {
+  loading: () => (
+    <Skeleton variant="rectangular" sx={skeletonStyles} animation="wave" />
+  ),
+})
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -58,20 +101,23 @@ export default React.memo(function Dashboard() {
 
   return (
     <div style={{ minHeight: '100%', marginTop: '20px' }}>
-      <Grid container spacing={0} gap={3} sx={gridStyle}>
+      <Grid
+        container
+        spacing={0}
+        gap={3}
+        sx={{
+          width: '90%',
+          margin: '0 auto',
+          height: '100%',
+        }}
+      >
         <Grid item xs={1.5}>
           <NestedList comp={comp} setComp={setComp} />
         </Grid>
-        <Grid item xs={10}>
+        <Grid item xs={10} sx={{ position: 'relative', height: 500 }}>
           <Item sx={{ ml: 1 }}>{renderComp()}</Item>
         </Grid>
       </Grid>
     </div>
   )
 })
-
-const gridStyle = {
-  width: '90%',
-  margin: '0 auto',
-  height: '100%',
-}

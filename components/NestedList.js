@@ -1,5 +1,5 @@
 import * as React from 'react'
-
+import dynamic from 'next/dynamic'
 // MUI
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -16,7 +16,12 @@ import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 
 // Components
-import Modals from '../components/Modals'
+// import Modals from '../components/Modals'
+
+const fallback = () => 'Loading ...'
+const Modals = dynamic(() => import('../components/Modals'), {
+  loading: fallback,
+})
 
 const listStyle = {
   width: '100%',

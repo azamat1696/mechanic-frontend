@@ -1,5 +1,6 @@
 import * as React from 'react'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
 
 // Material UI
 import { DataGrid, GridToolbar, trTR } from '@mui/x-data-grid'
@@ -31,6 +32,13 @@ import {
 // React Query
 import { useMutation } from '@tanstack/react-query'
 import { queryClient } from '../../pages/_app'
+const fallback = () => 'Loading ...'
+// const EditProductForm = dynamic(
+//   () => import('../forms/products/EditProductForm'),
+//   {
+//     loading: fallback,
+//   }
+// )
 
 const fontStyle = {
   fontFamily: "'Karla', sans-serif;",

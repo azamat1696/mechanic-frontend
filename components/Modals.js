@@ -1,4 +1,5 @@
 import React from 'react'
+import dynamic from 'next/dynamic'
 
 // Material UI
 import Box from '@mui/material/Box'
@@ -9,13 +10,39 @@ import Modal from '@mui/material/Modal'
 import Fade from '@mui/material/Fade'
 
 // Components
-import CreateProductForm from '../components/forms/products/CreateProductForm'
-import CreateCustomerForm from './forms/customers/CreateCustomerForm'
-import CreateSupplierForm from './forms/suppliers/CreateSupplierForm'
-import PurchaseForm from './forms/purchases/PurchaseForm'
-import CreateJobForm from './forms/orders/CreateOrderForm'
-import PurchaseForm2 from './forms/purchases/PurchaseForm2'
-import OrderForm from './forms/orders/OrderForm'
+// import CreateProductForm from '../components/forms/products/CreateProductForm'
+// import CreateCustomerForm from './forms/customers/CreateCustomerForm'
+// import CreateSupplierForm from './forms/suppliers/CreateSupplierForm'
+// import PurchaseForm from './forms/purchases/PurchaseForm'
+// import CreateJobForm from './forms/orders/CreateOrderForm'
+// import PurchaseForm2 from './forms/purchases/PurchaseForm2'
+// import OrderForm from './forms/orders/OrderForm'
+const fallback = () => 'Loading ...'
+
+const CreateProductForm = dynamic(
+  () => import('../components/forms/products/CreateProductForm'),
+  {
+    loading: fallback,
+  }
+)
+const CreateCustomerForm = dynamic(
+  () => import('./forms/customers/CreateCustomerForm'),
+  {
+    loading: fallback,
+  }
+)
+const CreateSupplierForm = dynamic(
+  () => import('./forms/suppliers/CreateSupplierForm'),
+  {
+    loading: fallback,
+  }
+)
+const PurchaseForm2 = dynamic(() => import('./forms/purchases/PurchaseForm2'), {
+  loading: fallback,
+})
+const OrderForm = dynamic(() => import('./forms/orders/OrderForm'), {
+  loading: fallback,
+})
 
 const style = {
   position: 'absolute',
