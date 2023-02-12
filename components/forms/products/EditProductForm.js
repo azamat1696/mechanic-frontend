@@ -29,7 +29,7 @@ import { queryClient } from '../../../pages/_app'
 
 const labelStyles = {
   display: 'block',
-  margin: '0 0 8.5px 3px',
+  margin: '0 0 10px 0px',
   fontWeight: '500',
   color: '#202024',
   fontSize: '0.95rem',
@@ -96,9 +96,9 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
   return (
     <form>
       <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={3} gap={0}>
+        <Grid container spacing={3} gap={0} padding={1}>
           <Grid item xs={12} sx={{ mb: -1 }}>
-            <Typography variant="h5">Update Product</Typography>
+            <Typography variant="h5">Edit Product</Typography>
           </Grid>
 
           <Grid item xs={12}>
@@ -108,8 +108,8 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Product Name</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               sx={cursorStyle}
@@ -125,8 +125,8 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Manufacturer</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               sx={cursorStyle}
@@ -142,8 +142,8 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Product Code</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               value={product.product_code}
@@ -166,7 +166,9 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
               disableClearable={true}
               sx={cursorStyle}
               value={product.supplier.name}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params) => (
+                <TextField {...params} variant="standard" />
+              )}
               onChange={(e) => {
                 // Loops over suppliers array
                 // find id that matches based on name
@@ -188,11 +190,11 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             <label style={labelStyles}>Cost Price</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="number"
@@ -208,11 +210,11 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             <label style={labelStyles}>Retail Price</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="number"
@@ -230,8 +232,8 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Min Qty</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="number"
@@ -250,8 +252,8 @@ export default function EditProductForm({ product, setProduct, handleClose }) {
           <Grid item xs={6}>
             <label style={labelStyles}>Image</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               disabled={true}

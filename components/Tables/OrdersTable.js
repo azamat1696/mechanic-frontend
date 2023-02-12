@@ -17,6 +17,7 @@ import Modal from '@mui/material/Modal'
 import Fade from '@mui/material/Fade'
 import DownloadIcon from '@mui/icons-material/Download'
 import LinearProgress from '@mui/material/LinearProgress'
+
 // Hooks
 import {
   deleteCustomerOrder,
@@ -132,7 +133,7 @@ const columns = [
     align: 'center',
     headerAlign: 'center',
     filterable: true,
-    // renderCell: (params) => <StatusChip params={params} />,
+    renderCell: (params) => <StatusChip params={params} />,
     valueGetter: (params) => {
       return `${params.row.status}`
     },
@@ -198,7 +199,7 @@ const DeleteBtn = ({ params }) => {
 const StatusChip = ({ params }) => {
   const { status } = params.row
   if (status === 'Waiting') {
-    return 'Waiting' //<Chip label={status} color="error" variant="outlined" />
+    return <Chip label={status} color="error" variant="outlined" />
   } else if (status === 'In Progress') {
     return <Chip label={status} color="primary" variant="outlined" />
   } else if (status === 'Complete') {
@@ -335,7 +336,7 @@ function DownloadTwo({ params }) {
   }
 
   const isObjectEmpty = (objectName) => Object.keys(objectName).length === 0
-  // const formatDate = (date) => new Date(date).toLocaleDateString()
+  const formatDate = (date) => new Date(date).toLocaleDateString()
 
   const totalValue = (arr) => {
     const values = arr.map((a) => a.Total)
@@ -354,14 +355,18 @@ function DownloadTwo({ params }) {
           },
           {
             width: '35%',
-            stack: ['Address A', 'Address B', 'Address C'],
+            stack: [
+              `${authState.merchantDetails.address1}`,
+              `${authState.merchantDetails.address2}`,
+              `${authState.merchantDetails.address3}`,
+            ],
             fontSize: 12,
             style: 'align',
           },
         ],
       },
       {
-        text: `Date: ${isObjectEmpty(order) ? 1 : order.createdAt}`,
+        text: `Date: ${isObjectEmpty(order) ? 1 : formatDate(order.createdAt)}`,
         margin: [0, 2, 10, 20],
       },
       { table: table(orderDetail, columns), style: 'table' },

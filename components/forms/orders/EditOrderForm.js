@@ -330,7 +330,7 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
               status: e.target.innerText,
             })
           }}
-          renderInput={(params) => <TextField {...params} variant="filled" />}
+          renderInput={(params) => <TextField {...params} variant="standard" />}
         />
       </Grid>
       <Grid xs={12}>
@@ -338,7 +338,7 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
           variant="outlined"
           onClick={addRow}
           // disabled={rowBtn}
-          sx={{ mt: 2 }}
+          sx={{ mt: 4, mb: 1 }}
         >
           Insert Row
         </Button>
@@ -350,15 +350,21 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
                 <div
                   key={od.count}
                   style={{
-                    marginBottom: '10px',
+                    marginBottom: '5px',
                     display: 'flex',
                     justifyContent: 'space-between',
+                    alignItems: 'self-end',
+                    // backgroundColor: 'yellow',
                   }}
                 >
                   <IconButton
                     aria-label="delete"
                     disableRipple={true}
-                    sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'transparent',
+                      },
+                    }}
                     onClick={() => handleLockState(od.count)}
                   >
                     {od.isLocked ? <LockIcon /> : <LockOpenIcon />}
@@ -399,7 +405,11 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
                     value={od.label || null}
                     onChange={(e) => handleProductChange(e, od.count)}
                     renderInput={(params) => (
-                      <TextField {...params} variant="filled" />
+                      <TextField
+                        {...params}
+                        variant="standard"
+                        label="Product"
+                      />
                     )}
                   />
                   <TextField
@@ -422,7 +432,7 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
                     }}
                     disabled={od.isLocked ? true : false}
                     InputProps={{ inputProps: { min: 0, defaultValue: 0 } }}
-                    variant="filled"
+                    variant="standard"
                     value={od.quantity}
                     onChange={(e) => handleQuantityChange(e, od)}
                   />
@@ -446,13 +456,13 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
                     }}
                     disabled={od.isLocked ? true : false}
                     InputProps={{ inputProps: { min: 0, defaultValue: 0 } }}
-                    variant="filled"
+                    variant="standard"
                     value={od.price}
                     onChange={(e) => handlePriceChange(e, od)}
                   />
                   <TextField
                     id="filled-number"
-                    label="Total Price"
+                    label="Line Price"
                     type="number"
                     sx={{
                       ml: 1,
@@ -470,7 +480,7 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
                     }}
                     disabled={true}
                     InputProps={{ inputProps: { min: 0, defaultValue: 0 } }}
-                    variant="filled"
+                    variant="standard"
                     value={od.price * od.quantity}
                     //   onChange={(e) => handleQtyChange(e, row)}
                   />
@@ -490,7 +500,7 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
           component="div"
           sx={{ mb: 0.5, ml: 0.85, fontSize: '18px', mt: 2 }}
         >
-          Sub Total
+          {/* Total */}
         </Typography>
         <TextField
           id="filled-number"
@@ -512,7 +522,7 @@ export default React.memo(function EditOrderForm({ order, handleClose }) {
           }}
           disabled={true}
           InputProps={{ inputProps: { min: 0, defaultValue: 0 } }}
-          variant="filled"
+          variant="standard"
           value={sub}
           //   onChange={(e) => handleQtyChange(e, row)}
         />

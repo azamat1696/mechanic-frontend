@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 // Components
 import ProductsTable from '../components/Tables/ProductsTable'
 import NestedList from '../components/NestedList'
+import { SettingsButton } from '../components/Settings'
 
 // Hooks
 import useAuthContext from '../hooks/useAuthContext'
@@ -15,13 +16,12 @@ import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Skeleton from '@mui/material/Skeleton'
 
-const fallback = () => 'Loading ...'
-
 const StockTable = dynamic(() => import('../components/Tables/StockTable'), {
   loading: () => (
     <Skeleton variant="rectangular" sx={skeletonStyles} animation="wave" />
   ),
 })
+
 const CustomersTable = dynamic(
   () => import('../components/Tables/CustomersTable'),
   {
@@ -30,6 +30,7 @@ const CustomersTable = dynamic(
     ),
   }
 )
+
 const PurchasesTable = dynamic(
   () => import('../components/Tables/PurchasesTable'),
   {
@@ -38,6 +39,7 @@ const PurchasesTable = dynamic(
     ),
   }
 )
+
 const SuppliersTable = dynamic(
   () => import('../components/Tables/SuppliersTable'),
   {
@@ -112,6 +114,7 @@ export default React.memo(function Dashboard() {
         }}
       >
         <Grid item xs={1.5}>
+          <SettingsButton comp={comp} setComp={setComp} />
           <NestedList comp={comp} setComp={setComp} />
         </Grid>
         <Grid item xs={10} sx={{ position: 'relative', height: 500 }}>

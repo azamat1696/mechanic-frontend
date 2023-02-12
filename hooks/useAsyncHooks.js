@@ -80,11 +80,21 @@ export async function createProduct(token, newProduct) {
       myInit
     )
 
+    console.log('res', res)
+
+    // if (!res.ok) {
+    //   if (res.status === 400) {
+    //     const data = await res.json()
+    //     throw new Error([data.data.message])
+    //   }
+    // } else {
+    // }
     const data = await res.json()
     console.log('data', data)
     return data
   } catch (err) {
     console.log('err', err)
+    return err
   }
 }
 

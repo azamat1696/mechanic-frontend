@@ -37,6 +37,14 @@ import { queryClient } from '../../../../pages/_app'
 
 const steps = ['Select Customer', 'Select Products', 'Create Order']
 
+const labelStyles = {
+  display: 'block',
+  margin: '0 0 10px 0px',
+  fontWeight: '500',
+  color: '#202024',
+  fontSize: '0.95rem',
+}
+
 export default function PurchaseStepper({ handleClose }) {
   const [activeStep, setActiveStep] = React.useState(0)
   const [disableNext, setDisableNext] = React.useState(false)
@@ -211,13 +219,14 @@ function CustomersList({ orderPost, setOrderPost }) {
 
   return (
     <Box sx={{ mt: 5, ml: 1 }}>
+      <label style={labelStyles}>Customer Name</label>
       <Autocomplete
         disablePortal
         id="combo-box-demo"
         options={orderPost.allCustomers}
         sx={{ width: 275 }}
         disableClearable="true"
-        renderInput={(params) => <TextField {...params} label="Customers" />}
+        renderInput={(params) => <TextField {...params} variant="standard" />}
         value={
           orderPost.chosenCustomerName !== null
             ? orderPost.chosenCustomerName
@@ -475,7 +484,7 @@ function ChosenProductsList({ orderPost, setOrderPost }) {
             <TextField
               id="filled-basic"
               label="Product"
-              variant="filled"
+              variant="standard"
               value={p.name}
               disabled="true"
               size="small"
@@ -488,7 +497,7 @@ function ChosenProductsList({ orderPost, setOrderPost }) {
               InputLabelProps={{
                 shrink: true,
               }}
-              variant="filled"
+              variant="standard"
               value={getQuantity(p.id)}
               size="small"
               sx={{ ml: 2, width: 125 }}
@@ -511,7 +520,7 @@ function ChosenProductsList({ orderPost, setOrderPost }) {
               InputLabelProps={{
                 shrink: true,
               }}
-              variant="filled"
+              variant="standard"
               value={p.retailPrice}
               size="small"
               sx={{ ml: 2, width: 125 }}
@@ -524,7 +533,7 @@ function ChosenProductsList({ orderPost, setOrderPost }) {
               InputLabelProps={{
                 shrink: true,
               }}
-              variant="filled"
+              variant="standard"
               value={getLinePrice(p.id)}
               size="small"
               sx={{ ml: 2, width: 125 }}
@@ -537,6 +546,7 @@ function ChosenProductsList({ orderPost, setOrderPost }) {
         sx={{
           display: 'flex',
           justifyContent: 'end',
+          mt: 3,
         }}
       >
         <TextField
@@ -547,7 +557,7 @@ function ChosenProductsList({ orderPost, setOrderPost }) {
           InputLabelProps={{
             shrink: true,
           }}
-          variant="filled"
+          variant="standard"
           value={getTotalPrice()}
           size="small"
           sx={{ ml: 0, width: 125 }}

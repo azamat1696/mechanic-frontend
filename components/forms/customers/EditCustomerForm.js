@@ -33,7 +33,7 @@ const listStyleSecond = {
 
 const labelStyles = {
   display: 'block',
-  margin: '0 0 8.5px 3px',
+  margin: '0 0 8.5px 0',
   fontWeight: '500',
   color: '#202024',
   fontSize: '0.95rem',
@@ -160,16 +160,19 @@ export default React.memo(function EditCustomerForm({
           <Grid item xs={12}>
             <Typography variant="h5">Edit Customer</Typography>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ mt: 1, mb: 2 }}>
             <Divider />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <label style={labelStyles}>First name</label>
             <TextField
               id="outlined-basic"
-              variant="outlined"
+              variant="standard"
               autoComplete="off"
               size="small"
+              inputProps={{
+                autocomplete: 'new-password',
+              }}
               value={customer.firstName}
               error={validate.firstNameError.isError}
               onChange={(e) => {
@@ -194,13 +197,16 @@ export default React.memo(function EditCustomerForm({
               </ul>
             ) : null}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <label style={labelStyles}>Last name</label>
             <TextField
               id="outlined-basic"
-              variant="outlined"
+              variant="standard"
               autoComplete="off"
               size="small"
+              inputProps={{
+                autocomplete: 'new-password',
+              }}
               value={customer.lastName}
               error={validate.lastNameError.isError}
               onChange={(e) => {
@@ -225,13 +231,16 @@ export default React.memo(function EditCustomerForm({
               </ul>
             ) : null}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <label style={labelStyles}>Email</label>
             <TextField
               id="outlined-basic"
-              variant="outlined"
+              variant="standard"
               autoComplete="off"
               size="small"
+              inputProps={{
+                autocomplete: 'new-password',
+              }}
               value={customer.email}
               error={validate.emailError.isError}
               onChange={(e) => {
@@ -256,13 +265,16 @@ export default React.memo(function EditCustomerForm({
               </ul>
             ) : null}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <label style={labelStyles}>Telephone</label>
             <TextField
               id="outlined-basic"
-              variant="outlined"
+              variant="standard"
               autoComplete="off"
               size="small"
+              inputProps={{
+                autocomplete: 'new-password',
+              }}
               value={customer.telephone}
               error={validate.telephoneError.isError}
               onChange={(e) => {

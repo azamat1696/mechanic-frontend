@@ -51,7 +51,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 650,
+  width: 750,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -242,7 +242,7 @@ const DeleteBtn = () => {
 }
 
 const Img = ({ url }) => {
-  console.log('url', url)
+  // console.log('url', url)
   // const myLoader = ({ width, quality }) =>
   //   `${url}?w=${width}&q=${quality || 25}`
   const myLoader = ({ width, quality }) => `${url}`
@@ -286,6 +286,8 @@ export default React.memo(function DataTable() {
       setStatus(true)
     } else if (productsStatus === 'success') {
       setStatus(false)
+    } else if (productsStatus === 'error') {
+      setError(productsErr)
     }
   }, [productsStatus])
 

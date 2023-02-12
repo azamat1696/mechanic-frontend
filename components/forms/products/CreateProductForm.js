@@ -42,7 +42,6 @@ const cursorStyle = {
 }
 
 export default function CreateProductForm({ handleClose }) {
-  // const [photo, setPhoto] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
   const [newProduct, setNewProduct] = React.useState({
@@ -62,15 +61,26 @@ export default function CreateProductForm({ handleClose }) {
   const { data } = useSuppliersByMerchant(authToken)
 
   const [suppliers, setSuppliers] = React.useState([])
+  const [err, setErr] = React.useState(null)
 
   const { mutate } = useMutation(() => createProduct(authToken, newProduct), {
-    onSuccess: () => {
-      setLoading(!loading)
+    onSuccess: (data) => {
+      // setLoading(!loading)
+      console.log(1, data)
+      setErr(data.data)
       queryClient.invalidateQueries({ queryKey: [`productsByMerchant`] })
       queryClient.invalidateQueries({ queryKey: [`stockByMerchant`] })
       queryClient.invalidateQueries({ queryKey: [`suppliersByMerchant`] })
     },
+    onError: (error) => {
+      console.log(2)
+      console.log('myError', error)
+    },
   })
+
+  React.useEffect(() => {
+    console.log('err', err)
+  }, [err])
 
   React.useEffect(() => {
     console.log('newProduct', newProduct)
@@ -111,8 +121,8 @@ export default function CreateProductForm({ handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Product Name</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               sx={cursorStyle}
@@ -127,8 +137,8 @@ export default function CreateProductForm({ handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Manufacturer</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               sx={cursorStyle}
@@ -143,8 +153,8 @@ export default function CreateProductForm({ handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Product Code</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               sx={cursorStyle}
@@ -164,7 +174,7 @@ export default function CreateProductForm({ handleClose }) {
               options={editedSuppliers}
               size="small"
               renderInput={(params) => (
-                <TextField {...params} sx={cursorStyle} />
+                <TextField {...params} sx={cursorStyle} variant="standard" />
               )}
               onChange={(e) => {
                 editedSuppliers.forEach((s) => {
@@ -181,8 +191,8 @@ export default function CreateProductForm({ handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Cost Price</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="number"
@@ -200,8 +210,8 @@ export default function CreateProductForm({ handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Retail Price</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="number"
@@ -220,8 +230,8 @@ export default function CreateProductForm({ handleClose }) {
           <Grid item xs={4}>
             <label style={labelStyles}>Min Qty</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="number"
@@ -240,8 +250,8 @@ export default function CreateProductForm({ handleClose }) {
           <Grid item xs={6}>
             <label style={labelStyles}>Image</label>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              id="standard-basic"
+              variant="standard"
               autoComplete="off"
               size="small"
               disabled={true}
@@ -272,7 +282,7 @@ export default function CreateProductForm({ handleClose }) {
             <LoadingButton
               color="secondary"
               onClick={() => {
-                handleClose()
+                // handleClose()
                 mutate(newProduct)
               }}
               loading={loading}

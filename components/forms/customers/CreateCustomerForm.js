@@ -67,14 +67,14 @@ export default function CreateCustomerForm({ handleClose }) {
           <Grid item xs={12}>
             <Typography variant="h5">Create Customer</Typography>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ mt: 1, mb: 2 }}>
             <Divider />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <label style={labelStyles}>First name</label>
             <TextField
               id="outlined-basic"
-              variant="outlined"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="text"
@@ -94,11 +94,11 @@ export default function CreateCustomerForm({ handleClose }) {
               }}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <label style={labelStyles}>Last name</label>
             <TextField
               id="outlined-basic"
-              variant="outlined"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="text"
@@ -118,11 +118,11 @@ export default function CreateCustomerForm({ handleClose }) {
               }}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <label style={labelStyles}>Email</label>
             <TextField
               id="outlined-basic"
-              variant="outlined"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="email"
@@ -142,11 +142,11 @@ export default function CreateCustomerForm({ handleClose }) {
               }}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <label style={labelStyles}>Telephone</label>
             <TextField
               id="outlined-basic"
-              variant="outlined"
+              variant="standard"
               autoComplete="off"
               size="small"
               type="tel"

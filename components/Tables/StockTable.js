@@ -132,14 +132,10 @@ const columns = [
     width: 100,
     align: 'center',
     headerAlign: 'center',
-    // renderCell: (params) => <MinChip params={params} />,
+    renderCell: (params) => <MinChip params={params} />,
     valueGetter: (params) => {
       const { min, inStock } = params.row
-      if (inStock <= min) {
-        return `Low`
-      } else {
-        return `Ok`
-      }
+      return inStock <= min ? 'Low' : 'Ok'
     },
   },
 ]
